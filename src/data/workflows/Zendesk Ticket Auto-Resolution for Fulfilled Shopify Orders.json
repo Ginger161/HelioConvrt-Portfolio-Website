@@ -1,0 +1,134 @@
+{
+  "name": "Zendesk Ticket Auto-Resolution for Fulfilled Shopify Orders",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1c14b04f-7eb5-40d3-a4c0-656f309a7e90",
+      "name": "Zendesk Ticket Trigger",
+      "type": "n8n-nodes-base.zendeskTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        208
+      ],
+      "webhookId": "24b3b586-744c-457f-8758-53fc2aca3cda"
+    },
+    {
+      "parameters": {
+        "authentication": "accessToken",
+        "operation": "get",
+        "orderId": "<__PLACEHOLDER_VALUE__Order number custom field ID (e.g., {{ $json.custom_fields[0].value }})__>",
+        "options": {}
+      },
+      "id": "e6473e91-fc77-4da2-b78b-1bb74c1fc105",
+      "name": "Get Shopify Order",
+      "type": "n8n-nodes-base.shopify",
+      "typeVersion": 1,
+      "position": [
+        464,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.fulfillment_status }}",
+              "rightValue": "fulfilled",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2d614f69-a33b-4072-8ee4-a25d1aed674b",
+      "name": "Check If Fulfilled",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        688,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $(\"Zendesk Ticket Trigger\").item.json.id }}",
+        "updateFields": {
+          "publicReply": "=Good news! Your order has been fulfilled and is on its way.\n\nTracking Number: {{ $(\"Get Shopify Order\").item.json.fulfillments[0].tracking_number }}\nTracking URL: {{ $(\"Get Shopify Order\").item.json.fulfillments[0].tracking_url }}\nCarrier: {{ $(\"Get Shopify Order\").item.json.fulfillments[0].tracking_company }}",
+          "status": "solved"
+        }
+      },
+      "id": "14693fe6-4315-4698-9ad8-cb33c2ebf78c",
+      "name": "Reply and Close Ticket",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        912,
+        208
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Zendesk Ticket Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Shopify Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Shopify Order": {
+      "main": [
+        [
+          {
+            "node": "Check If Fulfilled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Fulfilled": {
+      "main": [
+        [
+          {
+            "node": "Reply and Close Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "66ed29c4-75f8-443f-99f8-2898ce282cc9",
+  "meta": {
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "9FI51ShvYbg6kY0y",
+  "tags": []
+}

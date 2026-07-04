@@ -1,0 +1,138 @@
+{
+  "name": "Apollo Lead Verification and Instantly.ai Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apollo-leads",
+        "options": {}
+      },
+      "id": "e179a7fd-1af4-4781-bc8c-d9f89253f46a",
+      "name": "Apollo Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        208
+      ],
+      "webhookId": "9e781c6f-081e-4649-b410-be67ccb1a93e"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.millionverifier.com/api/v3/?api={{ $credentials.api_key }}&email={{ $json.body.email }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {}
+      },
+      "id": "8beca415-a741-43c1-b35e-cfddc0ce2ceb",
+      "name": "Verify Email with MillionVerifier",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        464,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.result }}",
+              "rightValue": "ok",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7fd675c6-1de7-4a04-bd14-4676dc7a0196",
+      "name": "Check Email Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        688,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/api/v1/lead/add",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"api_key\": $credentials.api_key, \"campaign_id\": $credentials.campaign_id, \"email\": $(\"Apollo Webhook\").item.json.body.email, \"first_name\": $(\"Apollo Webhook\").item.json.body.firstName, \"last_name\": $(\"Apollo Webhook\").item.json.body.lastName, \"company_name\": $(\"Apollo Webhook\").item.json.body.company } }}",
+        "options": {}
+      },
+      "id": "e3d14195-0e1f-4f39-8d31-b055a7ebd6bc",
+      "name": "Add to Instantly.ai Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        912,
+        208
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Apollo Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify Email with MillionVerifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Email with MillionVerifier": {
+      "main": [
+        [
+          {
+            "node": "Check Email Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Email Valid": {
+      "main": [
+        [
+          {
+            "node": "Add to Instantly.ai Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "2ef4ac49-5210-4450-bd33-a372f7f3f5d5",
+  "meta": {
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "bfL3YqSeRdR9ZDvB",
+  "tags": []
+}

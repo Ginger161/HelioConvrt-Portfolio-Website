@@ -1,0 +1,284 @@
+{
+  "name": "Shopify Order Fraud Detection with Risk-Based Routing and 2FA Verification",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "shopify-order-webhook",
+        "options": {}
+      },
+      "id": "8507e4b0-0b45-49c5-b112-53a76c2b6f52",
+      "name": "Shopify Order Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        112,
+        320
+      ],
+      "webhookId": "d6bf1a91-ccfc-40d7-8358-10073f7e02a2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.sift.com/v3/scores",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.body }}",
+        "options": {}
+      },
+      "id": "6c4f762c-7473-463f-9ce7-83682c965255",
+      "name": "Check Fraud Risk (Sift)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        336,
+        400
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "b91494b1-c48d-4a85-8ca5-c30c20f21cc2",
+      "name": "Merge Order & Score Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        560,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.score }}",
+                    "rightValue": 85,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "High Risk (>=85)"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.score }}",
+                    "rightValue": 60,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  },
+                  {
+                    "leftValue": "={{ $json.score }}",
+                    "rightValue": 85,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Medium Risk"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.score }}",
+                    "rightValue": 60,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Low Risk (<60)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cf8fa04d-4740-4d8a-8232-f881e36de2de",
+      "name": "Route by Risk Score",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "orderId": "={{ $json.id }}",
+        "updateFields": {
+          "tags": "fraud"
+        }
+      },
+      "id": "7e44e446-39ac-4ca6-9470-0bd87fdac393",
+      "name": "Cancel High-Risk Order",
+      "type": "n8n-nodes-base.shopify",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        128
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "from": "+1234567890",
+        "to": "={{ $json.customer.phone }}",
+        "message": "Verify your order with code 1234",
+        "options": {}
+      },
+      "id": "e4cb4994-eef3-4a51-8fed-8744c06869d1",
+      "name": "Send 2FA Verification",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        320
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "orderId": "={{ $json.id }}",
+        "updateFields": {
+          "tags": "Fraud-Cleared"
+        }
+      },
+      "id": "673fd6cd-27bb-4024-9749-45ab967f7cd9",
+      "name": "Tag Fraud-Cleared Order",
+      "type": "n8n-nodes-base.shopify",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        512
+      ],
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Shopify Order Webhook": {
+      "main": [
+        [
+          {
+            "node": "Check Fraud Risk (Sift)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Order & Score Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Fraud Risk (Sift)": {
+      "main": [
+        [
+          {
+            "node": "Merge Order & Score Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Order & Score Data": {
+      "main": [
+        [
+          {
+            "node": "Route by Risk Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Risk Score": {
+      "main": [
+        [
+          {
+            "node": "Cancel High-Risk Order",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send 2FA Verification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tag Fraud-Cleared Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5fe794f8-9173-455c-9731-d81d78f1eb8b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "U9XqUQ8eh2kPsg2C",
+  "tags": []
+}

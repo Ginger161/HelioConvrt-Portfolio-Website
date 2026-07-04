@@ -1,0 +1,228 @@
+{
+  "name": "Tailor Measurements Fabric Inventory Auto-Replenishment System",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ipad-intake-form",
+        "options": {}
+      },
+      "id": "b46a5dc4-3f6d-427b-a7cc-84cc2ec7f73a",
+      "name": "iPad Intake Form",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        256
+      ],
+      "webhookId": "a624e864-1a5b-4c9b-ac86-f2ace1557397"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Example calculation logic\nconst input = typeof item !== 'undefined' ? item.json : $input.item.json;\n\nreturn {\n  json: {\n    ...input,\n    fabric_needed_meters: 150 // Replace with your actual calculation formula\n  }\n};"
+      },
+      "id": "ca0a2409-3ee9-464d-9fae-3c7bbf69fa33",
+      "name": "Calculate Fabric Needed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "f9dadc64-8e31-4cac-8f8c-8897f068ac23",
+      "name": "Merge Data Streams",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        656,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.your-rfid-system.com/inventory",
+        "options": {}
+      },
+      "id": "3bcddb35-e917-4e2f-b1d1-8cb54a2cab30",
+      "name": "Check RFID Inventory",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        432,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.current_stock }}",
+                    "rightValue": "={{ $json.fabric_needed_meters }}",
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "true"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Sufficient Stock"
+        }
+      },
+      "id": "74bfd34e-3297-47cf-b451-9d609fb27b8e",
+      "name": "Check Reorder Threshold",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.your-edi-provider.com/orders",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "quantity_to_order",
+              "value": "={{ $json.fabric_needed_meters }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9354aded-4606-4153-9b9d-0791c50e0f64",
+      "name": "Send EDI Purchase Order",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1104,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return {\n  json: {\n    message: \"Inventory levels sufficient. No order placed.\"\n  }\n};"
+      },
+      "id": "9d707379-6ef3-41a7-bf2c-2a8cb13912ac",
+      "name": "No Reorder Needed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        352
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "iPad Intake Form": {
+      "main": [
+        [
+          {
+            "node": "Calculate Fabric Needed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check RFID Inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Fabric Needed": {
+      "main": [
+        [
+          {
+            "node": "Merge Data Streams",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Data Streams": {
+      "main": [
+        [
+          {
+            "node": "Check Reorder Threshold",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check RFID Inventory": {
+      "main": [
+        [
+          {
+            "node": "Merge Data Streams",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Check Reorder Threshold": {
+      "main": [
+        [
+          {
+            "node": "Send EDI Purchase Order",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Reorder Needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a8ca9687-f044-4bd7-a400-599ad339bb34",
+  "meta": {
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "I8z5Lvr4mm5oPr0U",
+  "tags": []
+}

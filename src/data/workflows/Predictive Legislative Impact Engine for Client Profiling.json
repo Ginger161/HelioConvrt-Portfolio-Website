@@ -1,0 +1,172 @@
+{
+  "name": "Predictive Legislative Impact Engine for Client Profiling",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "legislation-intake",
+        "options": {}
+      },
+      "id": "366efc97-f2d8-4c94-a6d1-1d6242a52c0f",
+      "name": "Receive Legislation Data",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        304
+      ],
+      "webhookId": "b7126e50-8da0-493a-ba70-4ae9ecefd7b1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the following legislation against our three client profiles and return ONLY clients with impact scores of 8 or above.\n\nBill Name: {{ $json.body.billName }}\nBill Text: {{ $json.body.billText }}\n\nClient Profiles:\n1. Healthcare Staffing - Interested in workforce regulations, licensing requirements, staffing ratios, and healthcare labor policies\n2. Renewable Energy Subsidies - Interested in clean energy incentives, tax credits, renewable energy mandates, and climate legislation\n3. Corporate Taxation - Interested in tax code changes, corporate tax rates, deductions, and business tax policy\n\nFor each client with an impact score of 8 or above:\n- Provide the client name\n- Assign an impact score (8-10)\n- Write a brief executive summary (2-3 sentences) explaining the impact\n\nReturn your response as a JSON array with this structure:\n[\n  {\n    \"clientName\": \"Client Name\",\n    \"impactScore\": 9,\n    \"executiveSummary\": \"Summary text here\"\n  }\n]\n\nIf no clients score 8 or above, return an empty array: []",
+        "batching": {}
+      },
+      "id": "4575df56-91d9-493d-b11a-9b6ffaf183c8",
+      "name": "Analyze Bill Impact",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        464,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "1277d58d-b0d1-43a8-9c93-75b2eed6b972",
+      "name": "OpenAI GPT Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        544,
+        528
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Ss6evl0s34Dy4WKq",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "id": "8197cf5b-e03e-43ff-af0c-9ca8ceec3ae2",
+      "name": "Split Client Matches",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        816,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Bill Name": "={{ $(\"Receive Legislation Data\").item.json.body.billName }}",
+            "Client Name": "={{ $json.clientName }}",
+            "Impact Score": "={{ $json.impactScore }}",
+            "Executive Summary": "={{ $json.executiveSummary }}",
+            "Introduced Date": "={{ $(\"Receive Legislation Data\").item.json.body.introducedDate }}",
+            "Sponsor": "={{ $(\"Receive Legislation Data\").item.json.body.sponsor }}"
+          }
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "29e8ee48-d93b-4807-8065-ecf1aa13724e",
+      "name": "Log to Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        304
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Receive Legislation Data": {
+      "main": [
+        [
+          {
+            "node": "Analyze Bill Impact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Bill Impact": {
+      "main": [
+        [
+          {
+            "node": "Split Client Matches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze Bill Impact",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Client Matches": {
+      "main": [
+        [
+          {
+            "node": "Log to Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e22ececd-78a4-42a6-ba37-4b033c338fc7",
+  "meta": {
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "aH1n5E8gyB5PwyuC",
+  "tags": []
+}

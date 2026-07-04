@@ -1,0 +1,343 @@
+{
+  "name": "AI-Powered L3 Engineering Ticket Diagnosis and Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "941e3f92-2469-4b53-ace2-0b67b1a2b4aa",
+      "name": "Zendesk Ticket Created/Updated",
+      "type": "n8n-nodes-base.zendeskTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        304
+      ],
+      "webhookId": "3d56206d-4bae-4114-aed0-3a0faa41d07c"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this Zendesk ticket and provide a comprehensive diagnostic analysis:\n\nTicket #{{ $json.id }}\nSubject: {{ $json.subject }}\nDescription: {{ $json.description }}\nPriority: {{ $json.priority }}\n\nUse the available tools to:\n1. Search historical tickets for similar issues\n2. Check current server metrics and deployment logs\n\nProvide a detailed diagnostic report including root cause analysis and recommended next steps.",
+        "options": {
+          "systemMessage": "You are an expert engineering lead analyzing support tickets. You have access to two specialized sub-agents:\n\n1. \"Researcher Sub-Agent\" - searches historical tickets and documentation\n2. \"Debugger Sub-Agent\" - fetches live server metrics and deployment logs\n\nUse both tools to gather comprehensive information, then synthesize a detailed diagnostic report with root cause analysis and actionable recommendations."
+        }
+      },
+      "id": "5aac8bd4-7bdf-4e69-b320-13c812e3649a",
+      "name": "Engineering Lead Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        608,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "f5a772bd-3bc2-4792-9e2a-4e58c790eba1",
+      "name": "Lead Agent Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        528
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Ss6evl0s34Dy4WKq",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search historical tickets and documentation for similar issues and resolutions",
+        "text": "={{ $(\"Zendesk Ticket Created/Updated\").item.json.subject }} - {{ $(\"Zendesk Ticket Created/Updated\").item.json.description }}",
+        "options": {}
+      },
+      "id": "828a5116-93f8-4435-90c3-67dc83dfefde",
+      "name": "Researcher Sub-Agent",
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "9f6cdf59-dfbd-4c03-8b90-bca268272b99",
+      "name": "Researcher Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        736
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Ss6evl0s34Dy4WKq",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search the knowledge base of past resolved tickets and documentation",
+        "pineconeIndex": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "id": "766fc634-dad7-4b90-b3ed-bad253d13317",
+      "name": "Pinecone Knowledge Base",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3766fc42-0de7-4c1c-a270-570b2f3bd82f",
+      "name": "OpenAI Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        944
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Ss6evl0s34Dy4WKq",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Fetch live server metrics including CPU, memory, and deployment logs",
+        "text": "=Check current server status and recent deployment logs for issues related to: {{ $(\"Zendesk Ticket Created/Updated\").item.json.subject }}",
+        "options": {}
+      },
+      "id": "c029be5a-804c-4c5a-a5d7-0ca827cd95d0",
+      "name": "Debugger Sub-Agent",
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        976,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "5120912d-ac2a-43ad-a644-8c11ce2fa400",
+      "name": "Debugger Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        992,
+        736
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Ss6evl0s34Dy4WKq",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "<__PLACEHOLDER_VALUE__Your server monitoring API endpoint (e.g., https://monitoring.example.com/api/metrics)__>",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {},
+        "optimizeResponse": true,
+        "fieldsToInclude": "selected",
+        "fields": "cpu,memory,deployments"
+      },
+      "id": "329e4ba3-a37e-4fbc-ac7e-c0b85ebc02b6",
+      "name": "Server Monitoring API",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        1120,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Zendesk Ticket Created/Updated').item.json.id }}",
+        "updateFields": {
+          "internalNote": "=AI Diagnostic Analysis:\n\n{{ $json.output }}"
+        }
+      },
+      "id": "ab202dd5-3654-463e-844a-b50a93938b4e",
+      "name": "Post Diagnostic Note",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        304
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Zendesk Ticket Created/Updated": {
+      "main": [
+        [
+          {
+            "node": "Engineering Lead Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Engineering Lead Agent": {
+      "main": [
+        [
+          {
+            "node": "Post Diagnostic Note",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Agent Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Engineering Lead Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Researcher Sub-Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Engineering Lead Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Researcher Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Researcher Sub-Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Researcher Sub-Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debugger Sub-Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Engineering Lead Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debugger Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Debugger Sub-Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Server Monitoring API": {
+      "ai_tool": [
+        [
+          {
+            "node": "Debugger Sub-Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "34a67511-3ffb-4896-a99a-b3a8d3810080",
+  "meta": {
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "LUjrgKOwt0vz1l9D",
+  "tags": []
+}

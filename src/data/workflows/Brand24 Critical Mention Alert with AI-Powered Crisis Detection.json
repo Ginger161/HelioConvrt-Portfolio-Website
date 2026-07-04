@@ -1,0 +1,194 @@
+{
+  "name": "Brand24 Critical Mention Alert with AI-Powered Crisis Detection",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "brand24-mention",
+        "options": {}
+      },
+      "id": "2be92903-da59-4c38-b380-73a1b5892160",
+      "name": "Brand24 Mention",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        304
+      ],
+      "webhookId": "e4d7dba9-33fa-4ce4-83e3-84fa90152c54"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-3-5-sonnet-20241022"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Analyze this brand mention and determine if it represents a critical PR crisis requiring immediate intervention.\n\nMention text: {{ $json.body.text }}\nAuthor: {{ $json.body.author }}\nSentiment: {{ $json.body.sentiment }}\nReach: {{ $json.body.reach }}\n\nA critical PR crisis is defined as:\n- Viral negative content (high reach + negative sentiment)\n- Mentions of safety issues, legal problems, or serious harm\n- Influential accounts spreading negative information\n- Potential for widespread reputational damage\n\nRespond with ONLY \"CRITICAL\" or \"ROUTINE\" followed by a brief explanation."
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 200
+        }
+      },
+      "id": "2ffa3f54-439d-45d3-a153-bd2c94e4af8f",
+      "name": "Analyze PR Crisis",
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        464,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.response }}",
+              "rightValue": "CRITICAL",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "41d3d18b-b859-44b3-b6fd-d3a6f3bc9e22",
+      "name": "Is Critical Crisis?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        816,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "apiToken",
+        "resource": "incident",
+        "operation": "create",
+        "title": "=CRITICAL PR CRISIS: Brand mention requires immediate attention",
+        "serviceId": "={{ $json.serviceId }}",
+        "email": "={{ $json.email }}",
+        "additionalFields": {
+          "details": "=Brand24 detected a critical mention:\n\nMention: {{ $(\"Brand24 Mention\").item.json.body.text }}\nAuthor: {{ $(\"Brand24 Mention\").item.json.body.author }}\nURL: {{ $(\"Brand24 Mention\").item.json.body.url }}\nReach: {{ $(\"Brand24 Mention\").item.json.body.reach }}\n\nAI Analysis: {{ $(\"Analyze PR Crisis\").item.json.response }}",
+          "urgency": "high"
+        },
+        "conferenceBridgeUi": {}
+      },
+      "id": "d9918bb7-1cbd-4998-84ff-fe6348177673",
+      "name": "Alert On-Call Team",
+      "type": "n8n-nodes-base.pagerDuty",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "status",
+              "type": "string",
+              "value": "routine"
+            },
+            {
+              "id": "2",
+              "name": "mention_text",
+              "type": "string",
+              "value": "={{ $(\"Brand24 Mention\").item.json.body.text }}"
+            },
+            {
+              "id": "3",
+              "name": "ai_analysis",
+              "type": "string",
+              "value": "={{ $(\"Analyze PR Crisis\").item.json.response }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8320c9c2-fd48-4b20-aa88-1ebd965be88b",
+      "name": "Log Routine Mention",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        400
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Brand24 Mention": {
+      "main": [
+        [
+          {
+            "node": "Analyze PR Crisis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze PR Crisis": {
+      "main": [
+        [
+          {
+            "node": "Is Critical Crisis?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Critical Crisis?": {
+      "main": [
+        [
+          {
+            "node": "Alert On-Call Team",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Routine Mention",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ff6a0140-e6b7-4d1c-ac7d-819c76106133",
+  "meta": {
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "NqxPzrIhPOEUWBM7",
+  "tags": []
+}
