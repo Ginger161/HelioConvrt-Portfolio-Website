@@ -13,7 +13,13 @@
         240,
         304
       ],
-      "webhookId": "3d56206d-4bae-4114-aed0-3a0faa41d07c"
+      "webhookId": "3d56206d-4bae-4114-aed0-3a0faa41d07c",
+      "credentials": {
+        "zendeskApi": {
+          "id": "9EOMY8JTfr3Ld2vG",
+          "name": "Zendesk account"
+        }
+      }
     },
     {
       "parameters": {
@@ -103,8 +109,8 @@
         "toolDescription": "Search the knowledge base of past resolved tickets and documentation",
         "pineconeIndex": {
           "__rl": true,
-          "mode": "list",
-          "value": ""
+          "value": "12345",
+          "mode": "id"
         },
         "topK": 5,
         "options": {}
@@ -116,7 +122,13 @@
       "position": [
         704,
         736
-      ]
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "RjvnE7B5pUWDmet5",
+          "name": "Pinecone account"
+        }
+      }
     },
     {
       "parameters": {
@@ -192,9 +204,10 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.4,
       "position": [
-        1120,
+        1216,
         736
-      ]
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -211,7 +224,13 @@
       "position": [
         1344,
         304
-      ]
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "9EOMY8JTfr3Ld2vG",
+          "name": "Zendesk account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -333,8 +352,9 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "34a67511-3ffb-4896-a99a-b3a8d3810080",
+  "versionId": "15406b15-b6a4-41b3-9bc2-aa45769f6a89",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
   },
   "nodeGroups": [],

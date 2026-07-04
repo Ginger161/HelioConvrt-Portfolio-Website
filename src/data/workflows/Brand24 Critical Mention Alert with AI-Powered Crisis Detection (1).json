@@ -1,0 +1,218 @@
+{
+  "name": "Brand24 Critical Mention Alert with AI-Powered Crisis Detection",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "brand24-mention-alert",
+        "options": {}
+      },
+      "id": "c765cbb0-b4ae-426e-9a94-8f082f45ac00",
+      "name": "Brand24 Mention",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        112,
+        272
+      ],
+      "webhookId": "a37cf1d6-e5ba-43cd-87db-9169815c3829"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a PR risk assessment bot. Analyze the incoming brand mention text. Return a strictly valid JSON object indicating if this constitutes a critical corporate crisis.\n\nOutput format:\n{\n  \"is_crisis\": true || false,\n  \"severity_reason\": \"Brief analysis\"\n}\n\nMention text: {{ $json.body.mention_text }}",
+        "batching": {}
+      },
+      "id": "8ce30f65-e06c-4a04-8828-f70259ed4e2f",
+      "name": "Analyze PR Crisis",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        336,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "2ad99824-445b-4518-90e8-45eada6fd03d",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        368
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Ss6evl0s34Dy4WKq",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "09f37d8c-37e4-40fb-966d-2e8468805b70",
+      "name": "Merge Context Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        688,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.is_crisis }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "crisis"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e14e22b7-4611-4c33-abce-fd41ae6b5c72",
+      "name": "Is Critical Crisis?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "apiToken",
+        "resource": "incident",
+        "operation": "create",
+        "title": "CRITICAL PR CRISIS: Negative Mention Detected",
+        "serviceId": "<__PLACEHOLDER_VALUE__Your PagerDuty Service ID__>",
+        "email": "<__PLACEHOLDER_VALUE__Your PagerDuty account email__>",
+        "additionalFields": {
+          "details": "=Mention: {{ $(\"Brand24 Mention\").item.json.body.mention_text }}\n\nAnalysis: {{ $(\"Analyze PR Crisis\").item.json.severity_reason }}"
+        },
+        "conferenceBridgeUi": {}
+      },
+      "id": "2a7faf19-9411-465d-a43d-b63fd9ec37a0",
+      "name": "Alert On-Call Team",
+      "type": "n8n-nodes-base.pagerDuty",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        272
+      ],
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Brand24 Mention": {
+      "main": [
+        [
+          {
+            "node": "Analyze PR Crisis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Context Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze PR Crisis": {
+      "main": [
+        [
+          {
+            "node": "Merge Context Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze PR Crisis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Context Data": {
+      "main": [
+        [
+          {
+            "node": "Is Critical Crisis?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Critical Crisis?": {
+      "main": [
+        [
+          {
+            "node": "Alert On-Call Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f7aba2a4-1a25-4fbb-8401-28f0cc0fb6dc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "NqxPzrIhPOEUWBM7",
+  "tags": []
+}

@@ -1,0 +1,203 @@
+{
+  "name": "Podcast to WordPress Blog Post Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1qceCbx6LHVtt63tFSuEbXk3Bi9Gsob9y",
+          "mode": "list",
+          "cachedResultName": "24k Goldn",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1qceCbx6LHVtt63tFSuEbXk3Bi9Gsob9y"
+        },
+        "event": "fileCreated",
+        "options": {
+          "fileType": "application/vnd.google-apps.audio"
+        }
+      },
+      "id": "dee929b8-978f-49d6-9b29-c2a836371a95",
+      "name": "New Audio File in Drive",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        112,
+        240
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mTJVffWX3ErdILVZ",
+          "name": "Google Drive OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "2e927830-e1f0-4079-813c-e8962452a2c0",
+      "name": "Download Audio Binary",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        336,
+        240
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mTJVffWX3ErdILVZ",
+          "name": "Google Drive OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "a142d7d0-91bb-4dea-9749-63057da10d50",
+      "name": "Transcribe with Whisper",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        560,
+        240
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Ss6evl0s34Dy4WKq",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-3-haiku-20240307"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an expert copywriter. Turn the following podcast transcript into a well-formatted WordPress blog post with HTML headings (H2, H3), paragraphs, and bullet points where appropriate.\n\nTranscript:\n{{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "554cd4dd-410f-465f-8484-35196d3539cf",
+      "name": "Format as Blog Post",
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        784,
+        240
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "4Dxg8PsrXXFQQTWF",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "title": "=Podcast: {{ $(\"New Audio File in Drive\").item.json.name }}",
+        "additionalFields": {
+          "content": "={{ $json.text }}",
+          "status": "draft"
+        }
+      },
+      "id": "0f02d0fa-db17-43c5-8d1f-b2024399f6a5",
+      "name": "Create WordPress Draft",
+      "type": "n8n-nodes-base.wordpress",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        240
+      ],
+      "credentials": {
+        "wordpressApi": {
+          "id": "fwoUTx6tHni5uIvv",
+          "name": "Wordpress account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "New Audio File in Drive": {
+      "main": [
+        [
+          {
+            "node": "Download Audio Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio Binary": {
+      "main": [
+        [
+          {
+            "node": "Transcribe with Whisper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe with Whisper": {
+      "main": [
+        [
+          {
+            "node": "Format as Blog Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format as Blog Post": {
+      "main": [
+        [
+          {
+            "node": "Create WordPress Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3ae5459c-e95b-4f16-9ebb-4f61fc1b2c5d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "uF9ESfBmimXnvWs0",
+  "tags": []
+}

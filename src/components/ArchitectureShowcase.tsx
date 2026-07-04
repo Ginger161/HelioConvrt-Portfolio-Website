@@ -4,14 +4,14 @@ import { motion } from 'framer-motion';
 import '@n8n_io/n8n-demo-component';
 
 // Import the real n8n workflow JSON files
-import apolloWorkflow from '../data/workflows/Apollo Lead Verification and Instantly.ai Integration.json';
-import brand24Workflow from '../data/workflows/Brand24 Critical Mention Alert with AI-Powered Crisis Detection.json';
-import podcastWorkflow from '../data/workflows/Podcast to WordPress Blog Post Automation.json';
-import zendeskWorkflow from '../data/workflows/Zendesk Ticket Auto-Resolution for Fulfilled Shopify Orders.json';
-import l3EngineeringWorkflow from '../data/workflows/AI-Powered L3 Engineering Ticket Diagnosis and Analysis.json';
-import legislativeImpactWorkflow from '../data/workflows/Predictive Legislative Impact Engine for Client Profiling.json';
-import shopifyFraudWorkflow from '../data/workflows/Shopify Order Fraud Detection with Risk-Based Routing and 2FA Verification.json';
-import tailorInventoryWorkflow from '../data/workflows/Tailor Measurements Fabric Inventory Auto-Replenishment System.json';
+import apolloWorkflow from '../data/workflows/Apollo Lead Verification and Instantly.ai Integration (1).json';
+import brand24Workflow from '../data/workflows/Brand24 Critical Mention Alert with AI-Powered Crisis Detection (1).json';
+import podcastWorkflow from '../data/workflows/Podcast to WordPress Blog Post Automation (1).json';
+import zendeskWorkflow from '../data/workflows/Zendesk Ticket Auto-Resolution for Fulfilled Shopify Orders (3).json';
+import l3EngineeringWorkflow from '../data/workflows/AI-Powered L3 Engineering Ticket Diagnosis and Analysis (1).json';
+import legislativeImpactWorkflow from '../data/workflows/Predictive Legislative Impact Engine for Client Profiling (1).json';
+import shopifyFraudWorkflow from '../data/workflows/Shopify Order Fraud Detection with Risk-Based Routing and 2FA Verification (1).json';
+import tailorInventoryWorkflow from '../data/workflows/Tailor Measurements Fabric Inventory Auto-Replenishment System (1).json';
 
 const workflowsData = [
   { title: "Apollo Lead Verification & Instantly.ai Sync", data: JSON.stringify(apolloWorkflow) },

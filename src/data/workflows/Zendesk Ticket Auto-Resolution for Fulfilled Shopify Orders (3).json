@@ -1,0 +1,196 @@
+{
+  "name": "Zendesk Ticket Auto-Resolution for Fulfilled Shopify Orders",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "any": [
+            {}
+          ]
+        }
+      },
+      "id": "50009696-b0d8-4331-a2ae-d002445f4ddf",
+      "name": "Zendesk Ticket Trigger",
+      "type": "n8n-nodes-base.zendeskTrigger",
+      "typeVersion": 1,
+      "position": [
+        112,
+        320
+      ],
+      "webhookId": "2b84b5e4-eea7-4812-b49e-d74b2bf6a997",
+      "credentials": {
+        "zendeskApi": {
+          "id": "9EOMY8JTfr3Ld2vG",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "options": {
+          "fields": "id,email,fulfillment_status,order_status_url"
+        }
+      },
+      "id": "5731704b-0ee6-4889-b30c-3eed4c221fb8",
+      "name": "Search Shopify by Email",
+      "type": "n8n-nodes-base.shopify",
+      "typeVersion": 1,
+      "position": [
+        336,
+        320
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.fulfillment_status }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "fulfilled"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fulfilled"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Not Fulfilled"
+        }
+      },
+      "id": "1d96f792-6f2c-4ef1-adb6-752b50f25e8c",
+      "name": "Check If Fulfilled",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $(\"Zendesk Ticket Trigger\").item.json.ticket.id }}",
+        "updateFields": {
+          "publicReply": "=Hi {{ $(\"Zendesk Ticket Trigger\").item.json.ticket.requester.name }},\n\nGreat news! Your order has already been fulfilled and is on its way. You can track it here: {{ $json.order_status_url }}\n\nThanks!",
+          "status": "solved"
+        }
+      },
+      "id": "2f9e9e26-d340-4fe3-882a-94d99f6bcd33",
+      "name": "Reply and Close Ticket",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        784,
+        224
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "9EOMY8JTfr3Ld2vG",
+          "name": "Zendesk account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $(\"Zendesk Ticket Trigger\").item.json.ticket.id }}",
+        "updateFields": {
+          "publicReply": "=Hi {{ $(\"Zendesk Ticket Trigger\").item.json.ticket.requester.name }},\n\nWe looked into your order and it is currently being packed by our fulfillment team.\n\nWe will send you a tracking link the moment it leaves our facility!\n\nBest,",
+          "status": "pending"
+        }
+      },
+      "id": "c2aafaae-4bdd-41be-923f-05c9dc95dc25",
+      "name": "Reply (Still Processing)",
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        784,
+        416
+      ],
+      "credentials": {
+        "zendeskApi": {
+          "id": "9EOMY8JTfr3Ld2vG",
+          "name": "Zendesk account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Zendesk Ticket Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search Shopify by Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Shopify by Email": {
+      "main": [
+        [
+          {
+            "node": "Check If Fulfilled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Fulfilled": {
+      "main": [
+        [
+          {
+            "node": "Reply and Close Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply (Still Processing)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8f993c63-5e44-4146-8cd5-81c39bc03eb8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "9FI51ShvYbg6kY0y",
+  "tags": []
+}

@@ -1,0 +1,206 @@
+{
+  "name": "Apollo Lead Verification and Instantly.ai Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apollo-lead-webhook",
+        "options": {}
+      },
+      "id": "5580f05e-b93e-4398-bb74-6dcb9be56328",
+      "name": "Apollo Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        112,
+        240
+      ],
+      "webhookId": "28d08102-4067-44fa-a620-05ed26d04371"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.millionverifier.com/v3/verify?api_key={{ placeholder(\"YOUR_MILLIONVERIFIER_API_KEY\") }}&email={{ $json.body.contact.email }}",
+        "options": {}
+      },
+      "id": "8d84c548-285a-4641-a7ad-3ea405dcc772",
+      "name": "Verify Email with MillionVerifier",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        336,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "88997c06-e9f7-4d22-9626-0462e0c44a45",
+      "name": "Merge Lead & Verification Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        560,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.result }}",
+                    "rightValue": "Ok",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "valid"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "invalid"
+        }
+      },
+      "id": "896e0288-6c39-480f-9071-c47de73688d1",
+      "name": "Check Email Valid",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/v1/lead/add",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ placeholder(\"YOUR_INSTANTLY_API_KEY\") }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"api_key\": placeholder(\"YOUR_INSTANTLY_API_KEY\"), \"campaign_id\": placeholder(\"YOUR_CAMPAIGN_ID\"), \"skip_if_in_any_campaign\": true, \"leads\": [{ \"email\": $(\"Apollo Webhook\").item.json.body.contact.email, \"first_name\": $(\"Apollo Webhook\").item.json.body.contact.first_name, \"last_name\": $(\"Apollo Webhook\").item.json.body.contact.last_name, \"company_name\": $(\"Apollo Webhook\").item.json.body.contact.organization.name }] } }}",
+        "options": {}
+      },
+      "id": "c509980e-20b9-44c2-9f8b-64996dc2f1c1",
+      "name": "Add to Instantly.ai Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1008,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return {\n  json: {\n    status: \"Rejected\",\n    email: $json.body?.contact?.email,\n    reason: \"Failed validation check\"\n  }\n};"
+      },
+      "id": "e026ecb1-d790-4dcf-867b-5af87627773b",
+      "name": "Log / Drop Invalid Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        336
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Apollo Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify Email with MillionVerifier",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Lead & Verification Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Email with MillionVerifier": {
+      "main": [
+        [
+          {
+            "node": "Merge Lead & Verification Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Lead & Verification Data": {
+      "main": [
+        [
+          {
+            "node": "Check Email Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Email Valid": {
+      "main": [
+        [
+          {
+            "node": "Add to Instantly.ai Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log / Drop Invalid Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e870b59b-f129-422f-af13-b5b1390f035e",
+  "meta": {
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "bfL3YqSeRdR9ZDvB",
+  "tags": []
+}
