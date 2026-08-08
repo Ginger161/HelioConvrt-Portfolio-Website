@@ -276,7 +276,7 @@ export default function Hero() {
               </MagneticButton>
               
               <a
-                href="https://cal.com/PLACEHOLDER"
+                href="https://calendly.com/list-inn130/discovery-call"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full md:w-auto border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.02] text-slate-300 hover:text-white px-8 py-4 rounded-full font-medium text-sm flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]"

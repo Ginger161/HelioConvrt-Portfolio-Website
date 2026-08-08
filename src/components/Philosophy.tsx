@@ -31,7 +31,7 @@ export default function Philosophy() {
               </a>
 
               <a
-                href="https://cal.com/PLACEHOLDER"
+                href="https://calendly.com/list-inn130/discovery-call"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex justify-center items-center gap-2 border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.02] text-slate-300 hover:text-white px-6 py-3 rounded-full font-medium text-xs transition-all duration-300 active:scale-[0.98]"
