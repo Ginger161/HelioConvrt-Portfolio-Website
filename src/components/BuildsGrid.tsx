@@ -4,7 +4,21 @@ import { ChevronDown } from 'lucide-react';
 import { CLIENT_BUILDS } from '../data/builds';
 import type { ClientBuild } from '../data/builds';
 
-function BuildCard({ build }: { build: ClientBuild }) {
+const CONCEPT_CLIENTS = [
+  'Global Retail Corp',
+  'TechFlow Solutions',
+  'Crestwood Financial',
+  'CloudScale Inc',
+  'Apex Outbound',
+  'MetricGrowth SaaS',
+  'Acme Health Partners',
+  'St. Catherine’s Wellness Retreat'
+];
+
+const REAL_BUILDS = CLIENT_BUILDS.filter(b => !CONCEPT_CLIENTS.includes(b.client));
+const CONCEPT_BUILDS = CLIENT_BUILDS.filter(b => CONCEPT_CLIENTS.includes(b.client));
+
+function BuildCard({ build, isConcept }: { build: ClientBuild; isConcept?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -21,9 +35,15 @@ function BuildCard({ build }: { build: ClientBuild }) {
             <span className="text-[10px] font-mono tracking-widest text-slate-500 border border-white/10 px-2.5 py-1 rounded-md uppercase inline-block">
               {build.category}
             </span>
-            <span className="text-[10px] font-mono font-semibold tracking-wide text-white bg-white/5 px-2.5 py-1 rounded-md border border-white/5 inline-block">
-              Client: {build.client}
-            </span>
+            {isConcept ? (
+              <span className="text-[10px] font-mono font-semibold tracking-wide text-slate-400 bg-white/5 px-2.5 py-1 rounded-md border border-white/5 inline-block">
+                Concept Build
+              </span>
+            ) : (
+              <span className="text-[10px] font-mono font-semibold tracking-wide text-white bg-white/5 px-2.5 py-1 rounded-md border border-white/5 inline-block">
+                Client: {build.client}
+              </span>
+            )}
           </div>
           <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
             {build.title}
@@ -136,11 +156,28 @@ export default function BuildsGrid() {
         <div className="h-1 w-12 bg-accentGreen-text/50 rounded-full" />
       </div>
 
-      {/* Grid of 13 Builds */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 items-start">
-        {CLIENT_BUILDS.map((build) => (
-          <BuildCard key={build.id} build={build} />
-        ))}
+      {/* Real Client Work */}
+      <div className="space-y-6">
+        <h3 className="text-[10px] font-mono tracking-widest text-accentOrange-text uppercase font-semibold">
+          CLIENT WORK
+        </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 items-start">
+          {REAL_BUILDS.map((build) => (
+            <BuildCard key={build.id} build={build} />
+          ))}
+        </div>
+      </div>
+
+      {/* Concept Builds */}
+      <div className="space-y-6 pt-12">
+        <h3 className="text-[10px] font-mono tracking-widest text-accentOrange-text uppercase font-semibold">
+          REFERENCE BUILDS
+        </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 items-start">
+          {CONCEPT_BUILDS.map((build) => (
+            <BuildCard key={build.id} build={build} isConcept />
+          ))}
+        </div>
       </div>
     </section>
   );

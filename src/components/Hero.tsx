@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowDown, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, ShieldCheck, X } from 'lucide-react';
 import { OrbitControls, Text, Billboard } from '@react-three/drei';
 import TerminalAccent from './TerminalAccent';
 
@@ -162,6 +162,7 @@ function MagneticButton({ children, href }: { children: React.ReactNode, href: s
 
 export default function Hero() {
   const [showStickyCTA, setShowStickyCTA] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
   const [localTime, setLocalTime] = useState(() => 
     new Date().toLocaleTimeString('en-US', { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit' })
   );
@@ -268,12 +269,22 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="flex flex-col items-center lg:items-start gap-4 pt-2"
           >
-            <div id="main-cta" className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto relative">
+            <div id="main-cta" className="flex flex-col md:flex-row flex-wrap items-center justify-center lg:justify-start gap-4 w-full md:w-auto relative">
               <MagneticButton href="https://www.upwork.com/freelancers/~01a9e8c29b672fc4d5?mp_source=share">
                 <span>Hire Me on Upwork</span>
                 <ArrowUpRight className="w-4 h-4" />
               </MagneticButton>
               
+              <a
+                href="https://cal.com/PLACEHOLDER"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full md:w-auto border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.02] text-slate-300 hover:text-white px-8 py-4 rounded-full font-medium text-sm flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98]"
+              >
+                <span>Book a Call</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </a>
+
               <a
                 href="#portfolio"
                 onClick={scrollToPortfolio}
@@ -302,10 +313,7 @@ export default function Hero() {
             <pointLight position={[10, 10, 10]} intensity={0.8} />
             <NodeGraph />
           </Canvas>
-          {/* Subtle indicator to show interactive R3F mesh */}
-          <div className="hidden lg:block absolute bottom-2 right-6 bg-white/[0.02] border border-white/[0.04] px-2.5 py-1 rounded-md text-[9px] font-mono text-slate-500 pointer-events-none">
-            3D interactive node lattice
-          </div>
+
         </div>
       </div>
 
@@ -322,21 +330,30 @@ export default function Hero() {
 
       {/* Sticky Bottom CTA for Apple-Style floating scroll-to-action */}
       <AnimatePresence>
-        {showStickyCTA && (
+        {showStickyCTA && !isDismissed && (
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#0a0a0a]/85 backdrop-blur-md border border-white/[0.08] rounded-2xl px-5 py-3.5 flex items-center justify-between gap-6 shadow-2xl shadow-black/90 max-w-[90vw] w-[340px] sm:w-[380px]"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#0a0a0a]/85 backdrop-blur-md border border-white/[0.08] rounded-2xl px-4 py-2.5 flex items-center justify-between gap-4 shadow-2xl shadow-black/90 max-w-[90vw] w-[340px] sm:w-[380px]"
           >
-            <div className="flex flex-col">
-              <span className="text-[9px] font-mono text-accentGreen-text font-semibold uppercase tracking-wider">
-                Contracts Open
-              </span>
-              <span className="text-xs text-white/90 font-medium whitespace-nowrap">
-                Hire Automation Specialist
-              </span>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => setIsDismissed(true)} 
+                className="p-1.5 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors"
+                aria-label="Dismiss"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <div className="flex flex-col">
+                <span className="text-[9px] font-mono text-accentGreen-text font-semibold uppercase tracking-wider">
+                  Contracts Open
+                </span>
+                <span className="text-xs text-white/90 font-medium whitespace-nowrap">
+                  Hire Specialist
+                </span>
+              </div>
             </div>
             <a
               href="https://www.upwork.com/freelancers/~01a9e8c29b672fc4d5?mp_source=share"

@@ -19,15 +19,27 @@ export default function Philosophy() {
           </p>
 
           <div className="pt-4 space-y-4">
-            <a
-              href="https://www.upwork.com/freelancers/~01a9e8c29b672fc4d5?mp_source=share"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white hover:bg-white/90 text-black px-6 py-3 rounded-full font-medium text-xs transition-all duration-300 active:scale-[0.98] shadow-md shadow-white/5"
-            >
-              <span>Start Your Build on Upwork</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </a>
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <a
+                href="https://www.upwork.com/freelancers/~01a9e8c29b672fc4d5?mp_source=share"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-white hover:bg-white/90 text-black px-6 py-3 rounded-full font-medium text-xs transition-all duration-300 active:scale-[0.98] shadow-md shadow-white/5"
+              >
+                <span>Start Your Build on Upwork</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+
+              <a
+                href="https://cal.com/PLACEHOLDER"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex justify-center items-center gap-2 border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.02] text-slate-300 hover:text-white px-6 py-3 rounded-full font-medium text-xs transition-all duration-300 active:scale-[0.98]"
+              >
+                <span>Book a Call</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
 
             <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-mono">
               <ShieldCheck className="w-3.5 h-3.5 text-accentGreen-text" />

@@ -1,0 +1,269 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "93c1a28c-9be0-496f-86e6-64a49b13b1a4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "30719246-d2d2-45af-bca8-b3c8124ce4a1",
+      "name": "Webhook",
+      "webhookId": "93c1a28c-9be0-496f-86e6-64a49b13b1a4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are an autonomous RevOps data enrichment agent. Your job is to process incoming lead payloads and update our CRM and tracking sheets accurately.\n\nWhen you receive a webhook payload containing a prospect's Name, Email, and Company Name, you must execute the following steps in this exact order:\n\n1. USE TOOL \"Search contacts in HubSpot\": Search for the prospect's email address to see if they already exist in the CRM.\n2. USE TOOL \"Create or update a contact in HubSpot\": If the contact does not exist, create a new record. If they do exist, ensure their Company Name is updated.\n3. USE TOOL \"Create a deal in HubSpot\": Create a new deal in the sales pipeline for this contact. Name the deal \"[Company Name] - In-House Client Acquisition Setup\".\n4. USE TOOL \"Append row in sheet in Google Sheets\": Log the Date, Prospect Name, Email, Company, and \"Deal Created\" status into the tracking sheet.\n\nDo not ask for follow-up confirmation. Execute all tools required and return a final summary of the actions taken.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3eb22a6a-81d3-452a-a482-4b51c5ffd584",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        208
+      ],
+      "id": "aa0a9c35-5b2a-45d0-be8e-7719d9c39326",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "itUy6bDCv0WbuB8e",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 7
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        224,
+        208
+      ],
+      "id": "da96488b-4c99-43fb-9a38-40a37f7cae4d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "search",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.hubspotTool",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        208
+      ],
+      "id": "f7a4c221-add5-43a6-9bb1-d0fab2c89270",
+      "name": "Search contacts in HubSpot",
+      "credentials": {
+        "hubspotOAuth2Api": {
+          "id": "H4uAsBavv7WgJLSF",
+          "name": "HubSpot OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', ``, 'string') }}",
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.hubspotTool",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        208
+      ],
+      "id": "a47308ea-b474-4855-bc0a-b64c6e4ab1ea",
+      "name": "Create or update a contact in HubSpot",
+      "credentials": {
+        "hubspotOAuth2Api": {
+          "id": "8xaClVYlmQ6uUGZG",
+          "name": "HubSpot OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "deal",
+        "stage": "5647682790",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.hubspotTool",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        208
+      ],
+      "id": "d7c430bb-7871-4147-8dc3-d0a64d70d87a",
+      "name": "Create a deal in HubSpot",
+      "credentials": {
+        "hubspotOAuth2Api": {
+          "id": "H4uAsBavv7WgJLSF",
+          "name": "HubSpot OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Document', ``, 'string') }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sheet', ``, 'string') }}",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        336,
+        368
+      ],
+      "id": "7ee1e027-2793-4093-b600-defefd12f443",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RSk9k3kXqQ4kbHgb",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Search contacts in HubSpot": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create or update a contact in HubSpot": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a deal in HubSpot": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4c129c5d-e17c-4f81-a4b6-cd13affb3df5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "91bb080366dc39950e8445a34f5a87938d9b95b9516f871c6de7c61655bae0b8"
+  },
+  "nodeGroups": [],
+  "id": "L4K2ltieeK1QIJTx",
+  "tags": []
+}
