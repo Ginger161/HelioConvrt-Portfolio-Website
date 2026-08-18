@@ -1,0 +1,299 @@
+{
+  "name": "AI Proposal Generator System",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an Elite B2B Presentation Designer and Web Conversion Architect. Your task is to generate a premium, single-file HTML/CSS presentation deck for print-to-PDF export.\n\nTone & Reasoning: Spartan, casual, highly persuasive, and to-the-point. Assume you are writing to a sophisticated executive audience. No fluff, no generic filler. You sell deal velocity, conversion rate optimization, and infrastructure.",
+              "role": "system"
+            },
+            {
+              "content": "Follow these strict architectural rules:\n\nOutput ONLY pure, valid HTML/CSS code. Do NOT wrap your response in markdown formatting (no ```html fences). Do NOT output n8n expression brackets {{ }}. Use the actual data provided.\n\nUse <section class=\"slide\"> for each slide.\n\nEnforce 16:9 geometry: @page { size: A4 landscape; margin: 0; } and @media print { .slide { page-break-after: always; height: 100vh; overflow: hidden; } }.\n\nDESIGN AESTHETIC: High-end, dynamic agency presentation. Eliminate empty whitespace by adding abstract CSS geometry.\n\nTEXTURES & SHAPES: You MUST include a subtle dot-grid background texture. You MUST use absolute positioned <div> elements to create decorative corner accents (using clip-path: polygon(...)), overlapping gradient circles at low opacity (rgba), and angled side-banners.\n\nCreate a 6-Slide Flow: 1. Cover (Must feature a dramatic angled background shape), 2. Executive Overview, 3. The Gap, 4. Strategic Architecture, 5. Investment & Scope, 6. Next Steps.\n\nAlways anchor the footer of the final slide with these details:\nGinger-Eke Chienyegom Justice | Web Conversion Analyst | helioconvrt.com | list.inn130@gmail.com | +234 803 885 9481"
+            },
+            {
+              "content": "Build a dynamic, engaging proposal deck for this prospect.\n\nBusiness Details:\nCompany Name: 1SecondCopy\nWebsite: 1secondcopy.com\nProblem: they can't generate leads. everything is referral based rn.\nSolution: cold email lead gen system, client reactivation system, and sales training.\nScope: 1k/day cold email infra, 30k email leads, 4 weekly zoom sessions.\n\nBrand Assets:\nPrimary Brand Color: #E53E3E\nSecondary Brand Color: #1A202C\nLogo URL: https://logo.clearbit.com/1secondcopy.com"
+            },
+            {
+              "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<style>\n  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Oswald:wght@500;700&display=swap');\n  :root { --primary: #0284C7; --secondary: #0F172A; --bg-light: #F8FAFC; --text-dark: #1E293B; --text-muted: #64748B; }\n  * { box-sizing: border-box; margin: 0; padding: 0; }\n  body { font-family: 'Inter', sans-serif; color: var(--text-dark); background: #FFFFFF; }\n  h1, h2, h3 { font-family: 'Oswald', sans-serif; text-transform: uppercase; color: var(--secondary); letter-spacing: 0.5px; }\n  \n  /* Slide Base with Dot Grid Texture & Safe Flex Column */\n  .slide { width: 100vw; height: 100vh; padding: 3.5rem; display: flex; flex-direction: column; position: relative; page-break-after: always; background-color: var(--bg-light); background-image: radial-gradient(#CBD5E1 1px, transparent 1px); background-size: 30px 30px; z-index: 1; }\n  \n  /* Abstract Geometry Elements */\n  .shape-corner-top { position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: var(--primary); clip-path: polygon(100% 0, 0 0, 100% 100%); opacity: 0.06; z-index: -1; }\n  .shape-corner-bottom { position: absolute; bottom: 0; left: 0; width: 400px; height: 120px; background: var(--secondary); clip-path: polygon(0 0, 0 100%, 100% 100%); opacity: 0.04; z-index: -1; }\n  .cover-slash { position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: linear-gradient(135deg, var(--secondary), var(--primary)); clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%); z-index: -1; opacity: 0.95; }\n  \n  /* Content Components */\n  .flex-row { display: flex; gap: 2rem; margin-top: 1.5rem; width: 100%; align-items: stretch; z-index: 2; }\n  .card { flex: 1; background: rgba(255, 255, 255, 0.95); border: 1px solid #E2E8F0; box-shadow: 0 10px 25px rgba(0,0,0,0.04); border-radius: 10px; padding: 2rem; position: relative; border-left: 5px solid var(--primary); }\n  .pill { display: inline-block; background: var(--primary); color: #FFFFFF; padding: 0.3rem 1rem; border-radius: 99px; font-weight: 600; font-size: 0.7rem; letter-spacing: 1px; margin-bottom: 1rem; text-transform: uppercase; }\n  \n  /* Safe Auto-Spacing Footer */\n  .footer { margin-top: auto; padding-top: 1.5rem; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.5px; z-index: 2; }\n  \n  p { font-size: 1rem; line-height: 1.6; color: #475569; }\n  h3 { font-size: 1.25rem; margin-bottom: 0.75rem; color: var(--secondary); }\n  .cover-logo { height: 70px; margin-bottom: 2.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }\n  @page { size: A4 landscape; margin: 0; }\n</style>\n</head>\n<body>\n  <!-- Slide 1: Cover -->\n  <section class=\"slide\" style=\"justify-content: center; background: #FFFFFF;\">\n    <div class=\"cover-slash\"></div>\n    <img src=\"https://logo.clearbit.com/1secondcopy.com\" class=\"cover-logo\" alt=\"Company Logo\">\n    <div style=\"max-width: 50%;\">\n      <h1 style=\"font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem; color: var(--secondary);\">Lead Gen <br><span style=\"color: var(--primary);\">Infrastructure</span></h1>\n      <p style=\"font-size: 1.25rem; color: var(--text-muted);\">A scalable system to move 1SecondCopy from referral-dependent to predictable revenue.</p>\n    </div>\n  </section>\n  <!-- Slide 2: Overview -->\n  <section class=\"slide\">\n    <div class=\"shape-corner-top\"></div>\n    <h2>Executive Overview</h2>\n    <div class=\"flex-row\">\n      <div class=\"card\">\n        <span class=\"pill\">01 / The Friction</span>\n        <p>Currently, 1SecondCopy relies entirely on referrals. While great for validation, it is neither scalable nor reliable for long-term growth.</p>\n      </div>\n      <div class=\"card\">\n        <span class=\"pill\">02 / The Delta</span>\n        <p>We will implement a closed-loop outbound system that takes leads from cold to close, ensuring pipeline consistency and revenue predictability.</p>\n      </div>\n    </div>\n    <div class=\"shape-corner-bottom\"></div>\n  </section>\n  <!-- Slide 3: Scope -->\n  <section class=\"slide\">\n    <div class=\"shape-corner-top\"></div>\n    <h2>Strategic Architecture</h2>\n    <div class=\"flex-row\">\n      <div class=\"card\"><h3>1. Outbound Infra</h3><p>12 domains, 36 mailboxes, sending ~1k emails daily.</p></div>\n      <div class=\"card\"><h3>2. Data Enrichment</h3><p>30k high-quality scraped email leads in your market.</p></div>\n      <div class=\"card\"><h3>3. Sales Training</h3><p>4 weekly Zoom sessions to take your closers from 0 to 1.</p></div>\n    </div>\n    <div class=\"shape-corner-bottom\"></div>\n    <div class=\"footer\">Ginger-Eke Chienyegom Justice | Web Conversion Analyst | helioconvrt.com | list.inn130@gmail.com | +234 803 885 9481</div>\n  </section>\n</body>\n</html>",
+              "role": "assistant"
+            },
+            {
+              "content": "=Build a dynamic, engaging proposal deck for this prospect. Analyze their industry and apply a suitable, modern design aesthetic that leverages their specific brand colors.\n\nBusiness Details:\nCompany Name: {{ $('On form submission').item.json['Company Name'] }}\nWebsite: {{ $('On form submission').item.json.Website }}\nProblem: {{ $('On form submission').item.json.Problem }}\nSolution: {{ $('On form submission').item.json.Solution }}\nScope: {{ $('On form submission').item.json.Scope }}\n\nBrand Assets (Inject these directly into your CSS variables and layout):\nPrimary Brand Color: {{ $('Brandfetch Context').item.json.colors[0].hex }}\nSecondary Brand Color: {{ $('Brandfetch Context').item.json.colors[1].hex }}\nLogo URL: {{ $('Brandfetch Context').item.json.logos[0].formats[0].src }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cb06d236-93ca-4993-98f3-17a24102af75",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        640,
+        80
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "wJCLNigv9Ys1PywG",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "Re: Proposal for {{ $('Brandfetch Context').item.json.name }}",
+        "message": "={{ $json.output[0].content[0].text }}",
+        "options": {}
+      },
+      "id": "29ab66fc-fb58-4166-9619-7ca90c244d61",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1408,
+        -32
+      ],
+      "webhookId": "b989215e-e975-44a7-9dc7-fd51e7310cba",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m03rH5git5J8tGdG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.brandfetch.io/v2/brands/domain/{{ $('On form submission').item.json.Website }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer E0fsgBAQijDQTH1NTyAnN9V0JhIP1_wpSDMwWE3Ffw03_RqRT2RhmQcjNgM3FvUrXFnQfDVJvLUSSrC-IqKfDw"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d6b79bc6-68dd-4e96-8f2f-1bccbb66de96",
+      "name": "Brandfetch Context",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        352,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "html_content": "={{ $json.message.content }}",
+        "output_format": "file",
+        "output_filename": "={{ $('Brandfetch Context').item.json.name }}"
+      },
+      "type": "n8n-nodes-htmlcsstopdf.htmlcsstopdf",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        -32
+      ],
+      "id": "6877c305-eff9-4bc3-a7d5-e3182545c411",
+      "name": "Convert HTML to PDF",
+      "credentials": {
+        "htmlcsstopdfApi": {
+          "id": "YRUWdFo6QDGpDZOU",
+          "name": "HTML to PDF account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html_content": "={{ $json.message.content }}",
+        "output_filename": "= {{ $('Brandfetch Context').item.json.name }}"
+      },
+      "type": "n8n-nodes-htmlcsstopdf.htmlcsstopdf",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        176
+      ],
+      "id": "6820d5b6-a7f0-49b2-9692-9a9e31ac9776",
+      "name": "Convert HTML to PDF1",
+      "credentials": {
+        "htmlcsstopdfApi": {
+          "id": "YRUWdFo6QDGpDZOU",
+          "name": "HTML to PDF account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are an elite RevOps consultant closing high-ticket deals with professional services firms. Your task is to write the body of an email delivering a strategic proposal.\nKeep the tone spartan, casual, and highly confident. No fluff. Use short sentences. Drive the prospect to review the attached PDF and reply with their availability for a technical discovery call. Do not include subject lines or placeholder brackets like [Your Name]. Sign off as \"Ginger\""
+            },
+            {
+              "content": "=Write a short, personalized email to the decision-maker at this company, referencing the specific problem we are solving for them.\n\nCompany Name: {{ $('On form submission').item.json['Company Name'] }}\nTheir Problem: {{ $('On form submission').item.json.Problem }}\nThe Solution We Built: {{ $('On form submission').item.json.Solution }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        416
+      ],
+      "id": "f3d434a6-45b3-408c-af45-2968b4ba1ceb",
+      "name": "Open AI (Email copy)",
+      "credentials": {
+        "openAiApi": {
+          "id": "wJCLNigv9Ys1PywG",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Proposal builder",
+        "formDescription": "Remove the [https://] from the website url",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Company Name"
+            },
+            {
+              "fieldLabel": "Website"
+            },
+            {
+              "fieldLabel": "Problem"
+            },
+            {
+              "fieldLabel": "Solution"
+            },
+            {
+              "fieldLabel": "Scope"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        176,
+        80
+      ],
+      "id": "38b54763-0ba4-4363-bb84-13a4c13098f6",
+      "name": "On form submission",
+      "webhookId": "bc303d3d-5f8b-4ba0-bf5e-5dc137cf27b5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to PDF",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert HTML to PDF1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brandfetch Context": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Open AI (Email copy)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert HTML to PDF": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open AI (Email copy)": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Brandfetch Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "df4365c2-f3d0-469b-8a58-fb975a53c05a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1baa66d78baa269a6b308a371030a1fb44f421c6763a3eadadb5c5a1fb330c14"
+  },
+  "nodeGroups": [],
+  "id": "asZ4cu4EkFt5Qk1c",
+  "tags": [
+    {
+      "updatedAt": "2026-08-17T07:18:08.520Z",
+      "createdAt": "2026-08-17T07:18:08.520Z",
+      "id": "8SAIUo6VxBgArPPL",
+      "name": "N8N Course"
+    }
+  ]
+}

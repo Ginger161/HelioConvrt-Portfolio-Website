@@ -8,6 +8,7 @@ export interface ClientBuild {
   theFlow: string;
   steps: string[];
   progress: string;
+  timeframe: string;
 }
 
 export const CLIENT_BUILDS: ClientBuild[] = [
@@ -25,7 +26,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Query: Shopify and Shipping API lookup the real-time fulfillment status.',
       'Resolve: If lost in transit, triggers auto-refund or dispatches a replacement order.'
     ],
-    progress: 'Reduced average resolution time from 42 hours to 90 seconds. Fully automated 72% of delivery disputes without human agent touch.'
+    progress: 'Reduced average resolution time from 42 hours to 90 seconds. Fully automated 72% of delivery disputes without human agent touch.',
+    timeframe: '3 Weeks'
   },
   {
     id: 'subscription-churn',
@@ -41,7 +43,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Generate: LLM creates a personalized discount or product swap offer.',
       'Execute: Applies the offer automatically via Stripe API if accepted.'
     ],
-    progress: 'Saved 28% of at-risk subscribers, recovering over $120,000 in Annual Recurring Revenue (ARR).'
+    progress: 'Saved 28% of at-risk subscribers, recovering over $120,000 in Annual Recurring Revenue (ARR).',
+    timeframe: '2 Weeks'
   },
   {
     id: 'vip-booking',
@@ -57,7 +60,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Converse: Bot handles scheduling logistics and answers basic tailoring queries.',
       'Book: Injects confirmed appointments into the master tailor\'s calendar.'
     ],
-    progress: 'Increased return customer booking rate by 45%. Saved the concierge team 20 hours a week.'
+    progress: 'Increased return customer booking rate by 45%. Saved the concierge team 20 hours a week.',
+    timeframe: '1 Week'
   },
   {
     id: 'hipaa-triage',
@@ -73,7 +77,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Format: Converts plain text into ICD-10 medical codes.',
       'Sync: Pushes structured data directly into the Electronic Health Record (EHR).'
     ],
-    progress: 'Eliminated 100% of manual data entry errors. Saved 45 minutes of nursing administrative time per patient.'
+    progress: 'Eliminated 100% of manual data entry errors. Saved 45 minutes of nursing administrative time per patient.',
+    timeframe: '4 Weeks'
   },
   {
     id: 'sentiment-defense',
@@ -89,7 +94,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Detect: Identifies sudden spikes in negative sentiment velocity.',
       'Alert: Pushes high-priority SMS and Slack warnings to PR managers.'
     ],
-    progress: 'Reduced crisis detection latency from 6 hours to 12 minutes, allowing immediate PR response deployment.'
+    progress: 'Reduced crisis detection latency from 6 hours to 12 minutes, allowing immediate PR response deployment.',
+    timeframe: '2 Weeks'
   },
   {
     id: 'ecommerce-sync',
@@ -105,7 +111,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Mirror: Synchronizes records in Airtable custom dashboard for operations.',
       'Update: Updates database units via legacy SOAP API of the warehouse software.'
     ],
-    progress: 'Eliminated stockout oversells entirely. Sync latency dropped from 2 hours to less than 15 seconds.'
+    progress: 'Eliminated stockout oversells entirely. Sync latency dropped from 2 hours to less than 15 seconds.',
+    timeframe: '3 Weeks'
   },
   {
     id: 'medical-scribe',
@@ -121,7 +128,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Format: GPT-4 organizes transcription into Subjective, Objective, Assessment, and Plan.',
       'Upload: Injects the formatted JSON data into the clinic\'s secure medical database.'
     ],
-    progress: 'Saved doctors 1.5 hours daily. Increased notation detail depth by 35%.'
+    progress: 'Saved doctors 1.5 hours daily. Increased notation detail depth by 35%.',
+    timeframe: '4 Weeks'
   },
   {
     id: 'pricing-scout',
@@ -137,7 +145,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Analyze: Calculates price variances and isolates aggressive discounting.',
       'Alert: Pushes reports to Slack with recommended adjustment values.'
     ],
-    progress: 'Allowed automatic pricing adjustments, maintaining competitive ranking and raising gross margin by 2.4%.'
+    progress: 'Allowed automatic pricing adjustments, maintaining competitive ranking and raising gross margin by 2.4%.',
+    timeframe: '1 Week'
   },
   {
     id: 'resume-screener',
@@ -153,7 +162,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Evaluate: LLM evaluates skills against specific rubric, ignoring demographic indicators.',
       'Invite: Sends an automated, highly personalized email inviting top-tier fits to book a call.'
     ],
-    progress: 'Decreased recruiter screening time by 90% and shortened time-to-hire by 12 days.'
+    progress: 'Decreased recruiter screening time by 90% and shortened time-to-hire by 12 days.',
+    timeframe: '2 Weeks'
   },
   {
     id: 'bank-statement-broker',
@@ -169,7 +179,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Compile: Python scripts clean raw text, resolving character errors.',
       'Build: Formats sheets with transaction categorization and outputs downloadable XLSX.'
     ],
-    progress: 'Normalized over 50,000 transactions with 100% exact math matching. Reduced turnaround time for client onboarding from 5 days to 5 minutes.'
+    progress: 'Normalized over 50,000 transactions with 100% exact math matching. Reduced turnaround time for client onboarding from 5 days to 5 minutes.',
+    timeframe: '3 Weeks'
   },
   {
     id: 'knowledge-curator',
@@ -185,7 +196,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Embed: Generates vector embeddings for semantic search in support bots.',
       'PR: Automatically opens a Pull Request on GitHub to update docs repository.'
     ],
-    progress: 'Auto-generated 140+ high-quality documentation pages directly from organic workspace discussions.'
+    progress: 'Auto-generated 140+ high-quality documentation pages directly from organic workspace discussions.',
+    timeframe: '2 Weeks'
   },
   {
     id: 'infrastructure-monitor',
@@ -201,7 +213,8 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Test: Verifies SMTP authentication is active on all workspace accounts.',
       'Notify: Sends critical details on Slack with specific resolution scripts.'
     ],
-    progress: 'Achieved sustained 98% email deliverability by capturing domain warnings 48 hours before impact.'
+    progress: 'Achieved sustained 98% email deliverability by capturing domain warnings 48 hours before impact.',
+    timeframe: '1 Week'
   },
   {
     id: 'newsletter-pipeline',
@@ -217,6 +230,24 @@ export const CLIENT_BUILDS: ClientBuild[] = [
       'Sync: Updates profile properties in outbound marketing databases.',
       'Fire: Injects transactional mail template tailored to user\'s exact workspace statistics.'
     ],
-    progress: 'Automated delivery of 1.2M custom-tailored user milestone summaries monthly. Boosted user activation metrics by 18.5%.'
+    progress: 'Automated delivery of 1.2M custom-tailored user milestone summaries monthly. Boosted user activation metrics by 18.5%.',
+    timeframe: '4 Weeks'
+  },
+  {
+    id: 'proposal-generator',
+    client: 'The Rainbow Strategy',
+    title: 'AI Proposal Generator System',
+    category: 'AI Integration',
+    flow: ['Form Trigger', 'Brandfetch API', 'OpenAI Deck Gen', 'HTML to PDF', 'Gmail Sending'],
+    businessBottleneck: 'Manual proposal creation took too long, reducing speed to lead and momentum after sales calls.',
+    theFlow: 'Captures prospect details via a form, enriches with brand assets, generates a custom HTML proposal using an LLM, converts it to PDF, and emails it within minutes.',
+    steps: [
+      'Capture: Sales rep submits company details on a fast form.',
+      'Enrich: Fetches logos and brand colors automatically via Brandfetch.',
+      'Generate: OpenAI drafts a custom 6-slide HTML/CSS presentation tailored to the prospect.',
+      'Convert & Send: Converts the HTML to PDF and emails it directly via Gmail.'
+    ],
+    progress: 'Enabled proposals to be generated and sent during the actual sales call, significantly increasing close rates and deal velocity.',
+    timeframe: '3 Days'
   }
 ];

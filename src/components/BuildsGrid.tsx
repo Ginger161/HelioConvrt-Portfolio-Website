@@ -72,70 +72,41 @@ function BuildCard({ build, isConcept }: { build: ClientBuild; isConcept?: boole
               transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
               className="overflow-hidden"
             >
-              <div className="pt-8 space-y-8">
-                {/* Business Bottleneck */}
-                <div className="space-y-3">
-                  <h4 className="text-[11px] font-mono uppercase tracking-widest text-accentOrange-text flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accentOrange-text" />
-                    Business Bottleneck
-                  </h4>
-                  <p className="text-sm text-slate-400 font-light leading-relaxed">
-                    {build.businessBottleneck}
-                  </p>
-                </div>
-                
-                {/* The Flow */}
-                <div className="space-y-3">
-                  <h4 className="text-[11px] font-mono uppercase tracking-widest text-white/70 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
-                    The Flow
-                  </h4>
-                  <p className="text-sm text-slate-400 font-light leading-relaxed">
-                    {build.theFlow}
-                  </p>
-                </div>
-
-                {/* The Steps */}
-                <div className="space-y-4">
-                  <h4 className="text-[11px] font-mono uppercase tracking-widest text-white/70 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
-                    The Steps
-                  </h4>
-                  <ul className="space-y-3">
-                    {build.steps.map((step, idx) => {
-                      // Extract the bold word (e.g., "Ingest:") if formatted that way in data
-                      const splitIndex = step.indexOf(':');
-                      const hasPrefix = splitIndex > 0 && splitIndex < 15;
-                      
-                      return (
-                        <li key={idx} className="flex gap-3 text-sm text-slate-400 font-light leading-relaxed items-start">
-                          <span className="text-accentGreen-text font-mono mt-0.5 min-w-[1.2rem]">{idx + 1}.</span>
-                          <span>
-                            {hasPrefix ? (
-                              <>
-                                <span className="font-semibold text-white/90">{step.slice(0, splitIndex + 1)}</span>
-                                {step.slice(splitIndex + 1)}
-                              </>
-                            ) : (
-                              step
-                            )}
-                          </span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-
-                {/* The Progress */}
-                <div className="p-5 bg-accentGreen-text/5 border border-accentGreen-text/10 rounded-xl space-y-3 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-accentGreen-text/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                  <h4 className="text-[11px] font-mono uppercase tracking-widest text-accentGreen-text relative z-10">
-                    The Progress
-                  </h4>
-                  <p className="text-sm text-white/90 font-light leading-relaxed relative z-10">
-                    {build.progress}
-                  </p>
-                </div>
+              <div className="pt-8">
+                <ul className="space-y-5 text-sm text-slate-300 font-light leading-relaxed">
+                  <li className="flex gap-3 items-start">
+                    <span className="text-accentGreen-text mt-0.5 text-lg leading-none">•</span>
+                    <div>
+                      <span className="font-semibold text-white/90">Who the client was:</span> {build.client}
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-accentGreen-text mt-0.5 text-lg leading-none">•</span>
+                    <div>
+                      <span className="font-semibold text-white/90">What problem they had:</span> {build.businessBottleneck}
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-accentGreen-text mt-0.5 text-lg leading-none">•</span>
+                    <div>
+                      <span className="font-semibold text-white/90">What you implemented:</span> {build.theFlow}
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-accentGreen-text mt-0.5 text-lg leading-none">•</span>
+                    <div>
+                      <span className="font-semibold text-white/90">How long it took:</span> {build.timeframe}
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start relative">
+                    <span className="text-accentGreen-text mt-0.5 text-lg leading-none relative z-10">•</span>
+                    <div className="relative z-10">
+                      <span className="font-semibold text-accentGreen-text">What measurable result occurred:</span> <span className="text-white/90">{build.progress}</span>
+                    </div>
+                    {/* Subtle glow for the result */}
+                    <div className="absolute top-1/2 left-0 w-24 h-24 bg-accentGreen-text/10 rounded-full blur-xl -translate-y-1/2 pointer-events-none" />
+                  </li>
+                </ul>
               </div>
             </motion.div>
           )}

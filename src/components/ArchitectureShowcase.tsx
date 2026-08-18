@@ -13,6 +13,7 @@ import legislativeImpactWorkflow from '../data/workflows/Predictive Legislative 
 import shopifyFraudWorkflow from '../data/workflows/Shopify Order Fraud Detection with Risk-Based Routing and 2FA Verification (1).json';
 import tailorInventoryWorkflow from '../data/workflows/Tailor Measurements Fabric Inventory Auto-Replenishment System (1).json';
 import inboundDealEnrichmentWorkflow from '../data/workflows/Inbound Deal Enrichment Agent.json';
+import proposalGeneratorWorkflow from '../data/workflows/Proposal Generator System.json';
 
 const workflowsData = [
   { title: "Apollo Lead Verification & Instantly.ai Sync", data: JSON.stringify(apolloWorkflow) },
@@ -23,7 +24,8 @@ const workflowsData = [
   { title: "Predictive Legislative Impact Engine", data: JSON.stringify(legislativeImpactWorkflow) },
   { title: "Shopify Fraud Detection & 2FA Routing", data: JSON.stringify(shopifyFraudWorkflow) },
   { title: "Tailor Fabric Inventory Auto-Replenishment", data: JSON.stringify(tailorInventoryWorkflow) },
-  { title: "Inbound Deal Enrichment Agent", data: JSON.stringify(inboundDealEnrichmentWorkflow) }
+  { title: "Inbound Deal Enrichment Agent", data: JSON.stringify(inboundDealEnrichmentWorkflow) },
+  { title: "AI Proposal Generator System", data: JSON.stringify(proposalGeneratorWorkflow) }
 ];
 
 export default function ArchitectureShowcase() {
