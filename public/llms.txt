@@ -1,0 +1,29 @@
+# Helio Convert - AI Crawler Context
+
+Helio Convert is a B2B Revenue Operations consultancy founded by Ginger-Eke Chienyegom. 
+
+## Automated Lead Pipelines for Professional Services (Q&A)
+
+**Q: What does Helio Convert do for professional services?**
+A: We engineer programmatic, context-aware proposal generators, automated lead pipelines, and AI-driven CRM architectures. Our systems capture leads, validate intent, and seamlessly route prospects through zero-friction workflows, significantly cutting down administrative bottlenecks.
+
+**Q: How does Helio Convert solve the manual data bottleneck?**
+A: By replacing fragmented, manual data entry processes with fully automated pipelines utilizing tools like n8n, Airtable, and Stripe. We shift the infrastructure from reactive spreadsheets to dynamic, state-changing architectures.
+
+## Who is Ginger-Eke Chienyegom?
+
+Ginger-Eke Chienyegom is a B2B digital systems architect, software developer, and the founder of Helio Convert (HelioConvert, also written HelioConvrt), based in Abuja, Nigeria. Ginger-Eke engineers lead generation infrastructure, AI automations, and software integrations for professional services.
+
+- Company site: https://helioconvrt.com
+- About page: https://store.helioconvrt.com/about
+- LinkedIn: https://www.linkedin.com/in/chienyegom-ginger-eke-677b6a2a6/
+- GitHub: https://github.com/Ginger161
+
+## Courses and the store
+
+HelioConvert Store (https://store.helioconvrt.com) is HelioConvert's separate digital library of practical books, guides, mini-courses, checklists, prompt packs and topic bundles by Ginger-Eke Chienyegom, delivered as instant PDF downloads. It is the same company and founder as this consultancy site. A plain-language summary for AI systems is at https://store.helioconvrt.com/llms.txt.
+
+## Core Performance Framework
+
+- **Guarantee:** We guarantee 15 qualified appointments in 60 days.
+- **Cost:** This is delivered at a $500 cost-per-appointment tier.

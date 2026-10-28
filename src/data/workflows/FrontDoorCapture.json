@@ -1,0 +1,369 @@
+{
+  "name": "Doxa Commissions messaging flow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1e44a57b-832c-4e28-8f39-b98557c6769f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c017a3a1-38f1-42ae-b7f5-526c718ea8c2",
+      "name": "Webhook",
+      "webhookId": "1e44a57b-832c-4e28-8f39-b98557c6769f"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "applyFtErubMLf6Py",
+          "mode": "list",
+          "cachedResultName": "Doxa Master CRM",
+          "cachedResultUrl": "https://airtable.com/applyFtErubMLf6Py"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblWztjCsOa2w5Di7",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/applyFtErubMLf6Py/tblWztjCsOa2w5Di7"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.body.data.fields[0].value }}",
+            "Email": "={{ $json.body.data.fields[1].value }}",
+            "Phone": "={{ $json.body.data.fields[2].value }}",
+            "Branch": "={{ $json.body.data.fields[3].options[2].text }}",
+            "Status": "New Visitor"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Branch",
+              "displayName": "Branch",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Abuja",
+                  "value": "Abuja"
+                },
+                {
+                  "name": "Lagos",
+                  "value": "Lagos"
+                },
+                {
+                  "name": "Calabar",
+                  "value": "Calabar"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New Visitor",
+                  "value": "New Visitor"
+                },
+                {
+                  "name": "Welcome Sequence Active",
+                  "value": "Welcome Sequence Active"
+                },
+                {
+                  "name": "Attended Service",
+                  "value": "Attended Service"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8410cfe9-026b-40c1-aa0b-f9775716065d",
+      "name": "Create a record",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "UwvYdFLuH9kjnXvj",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.fields.Branch }}",
+                    "rightValue": "Abuja",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "fcc54fc8-584c-46d2-8b61-b1a72b6253a5"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "789a32fc-3265-461d-8d3e-b1d86db03a2d",
+                    "leftValue": "={{ $json.fields.Branch }}",
+                    "rightValue": "Lagos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d41c64a7-17ae-4574-978c-650dc179e659",
+                    "leftValue": "={{ $json.fields.Branch }}",
+                    "rightValue": "Calabar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        -16
+      ],
+      "id": "909096bb-df33-49e9-b525-5be11dca0438",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.fields.Email }}",
+        "subject": "=Welcome to Doxa Commissions {{ $json.fields.Branch }}",
+        "message": "=<div style=\"font-family: 'Arial', sans-serif; max-width: 600px; margin: auto; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);\">     <div style=\"background-color: #0056B3; padding: 30px; text-align: center;\">         <img src=\"https://yt3.googleusercontent.com/ytc/AIdro_mB7bTmYS5vNAHTCSjuTb4gSoZU1fJjMoi00mJgJxpi_A=s160-c-k-c0x00ffffff-no-rj\" alt=\"Doxa Commission Global\" style=\"max-width: 120px; border-radius: 50%;\">     </div>     <div style=\"padding: 40px 30px; background-color: #ffffff; color: #333333; line-height: 1.6; font-size: 16px;\">         <p>Dear {{ $json.fields.Name }},</p>         <p>We are absolutely thrilled that you chose to worship with us at the <strong>Abuja Branch</strong> of Doxa Commission Global.</p>         <p style=\"border-left: 4px solid #D4AF37; padding-left: 15px; font-style: italic; color: #555555; margin: 25px 0;\">             \"Those that be planted in the house of the Lord shall flourish in the courts of our God.\" <br><strong>— Psalm 92:13</strong>         </p>         <p>Stepping through our doors was not a coincidence; it was a divine step toward your next level of spiritual growth and purpose. Here, we believe that church is a family built on deep integrity, consistent faith, and genuine love. You have found a safe environment where you will be spiritually challenged, deeply supported, and equipped to leave a lasting name in your generation.</p>         <p>We would love to continue this journey with you. Here is our weekly schedule:</p>         <ul style=\"list-style-type: none; padding: 0; margin-top: 20px;\">             <li style=\"margin-bottom: 10px;\"><strong>Wednesday Evening Service:</strong> 4:00 PM - 7:00 PM</li>             <li style=\"margin-bottom: 10px;\"><strong>Sunday Morning Service:</strong> 8:00 AM - 10:00 AM</li>             <li style=\"margin-bottom: 10px;\"><strong>Sunday Evening Service:</strong> 4:00 PM - 7:00 PM</li>         </ul>         <p style=\"padding: 15px; background-color: #F8F9FA; border-left: 4px solid #0056B3; margin-top: 20px;\">             <strong>📍 Location:</strong> Doxa Commission, Abuja.         </p>         <p style=\"margin-top: 30px;\">You have made a powerful decision for your spiritual trajectory. We are so honored to be part of your story.</p>         <p>Welcome home.</p>         <p style=\"margin-top: 30px; border-top: 1px solid #eeeeee; padding-top: 20px;\">             Blessings,<br>             <strong style=\"color: #0056B3;\">The Pastoral Team</strong><br>             <span style=\"color: #D4AF37; font-weight: bold;\">Doxa Commission Global</span>         </p>     </div> </div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        -176
+      ],
+      "id": "5a9bfc2c-0a28-4ac3-b6d2-004a0f142ed5",
+      "name": "Send a message",
+      "webhookId": "eccc08a2-937c-4ec4-92a5-65523d106fe6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m03rH5git5J8tGdG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.fields.Email }}",
+        "subject": "Welcome to Doxa Commissions",
+        "message": "=<div style=\"font-family: 'Arial', sans-serif; max-width: 600px; margin: auto; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);\">     <div style=\"background-color: #0056B3; padding: 30px; text-align: center;\">         <img src=\"https://yt3.googleusercontent.com/ytc/AIdro_mB7bTmYS5vNAHTCSjuTb4gSoZU1fJjMoi00mJgJxpi_A=s160-c-k-c0x00ffffff-no-rj\" alt=\"Doxa Commission Global\" style=\"max-width: 120px; border-radius: 50%;\">     </div>     <div style=\"padding: 40px 30px; background-color: #ffffff; color: #333333; line-height: 1.6; font-size: 16px;\">         <p>Dear {{ $json.fields.Name }},</p>         <p>We are absolutely thrilled that you chose to worship with us at the <strong>Lagos Branch</strong> of Doxa Commission Global.</p>         <p style=\"border-left: 4px solid #D4AF37; padding-left: 15px; font-style: italic; color: #555555; margin: 25px 0;\">             \"Those that be planted in the house of the Lord shall flourish in the courts of our God.\" <br><strong>— Psalm 92:13</strong>         </p>         <p>Stepping through our doors was not a coincidence; it was a divine step toward your next level of spiritual growth and purpose. Here, we believe that church is a family built on deep integrity, consistent faith, and genuine love. You have found a safe environment where you will be spiritually challenged, deeply supported, and equipped to leave a lasting name in your generation.</p>         <p>We would love to continue this journey with you. Here is our weekly schedule:</p>         <ul style=\"list-style-type: none; padding: 0; margin-top: 20px;\">             <li style=\"margin-bottom: 10px;\"><strong>Thursday Service:</strong> 5:00 PM</li>             <li style=\"margin-bottom: 10px;\"><strong>Sunday Service:</strong> 4:00 PM</li>         </ul>         <p style=\"padding: 15px; background-color: #F8F9FA; border-left: 4px solid #0056B3; margin-top: 20px;\">             <strong>📍 Location:</strong> LASU Staff School Hall, LASU-Ojo, Lagos.         </p>         <p style=\"margin-top: 30px;\">You have made a powerful decision for your spiritual trajectory. We are so honored to be part of your story.</p>         <p>Welcome home.</p>         <p style=\"margin-top: 30px; border-top: 1px solid #eeeeee; padding-top: 20px;\">             Blessings,<br>             <strong style=\"color: #0056B3;\">The Pastoral Team</strong><br>             <span style=\"color: #D4AF37; font-weight: bold;\">Doxa Commission Global</span>         </p>     </div> </div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        0
+      ],
+      "id": "47b0b21e-0bc6-4556-bd6c-0f76a90fbd59",
+      "name": "Send a message1",
+      "webhookId": "a086315f-3b6a-4ab8-8aa9-76eff8cb7a52",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m03rH5git5J8tGdG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.fields.Email }}",
+        "subject": "Welcome to Doxa Commissions",
+        "message": "=<div style=\"font-family: 'Arial', sans-serif; max-width: 600px; margin: auto; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);\">     <div style=\"background-color: #0056B3; padding: 30px; text-align: center;\">         <img src=\"https://yt3.googleusercontent.com/ytc/AIdro_mB7bTmYS5vNAHTCSjuTb4gSoZU1fJjMoi00mJgJxpi_A=s160-c-k-c0x00ffffff-no-rj\" alt=\"Doxa Commission Global\" style=\"max-width: 120px; border-radius: 50%;\">     </div>     <div style=\"padding: 40px 30px; background-color: #ffffff; color: #333333; line-height: 1.6; font-size: 16px;\">         <p>Dear {{ $json.fields.Name }},</p>         <p>We are absolutely thrilled that you chose to worship with us at the <strong>Calabar Branch</strong> of Doxa Commission Global.</p>         <p style=\"border-left: 4px solid #D4AF37; padding-left: 15px; font-style: italic; color: #555555; margin: 25px 0;\">             \"Those that be planted in the house of the Lord shall flourish in the courts of our God.\" <br><strong>— Psalm 92:13</strong>         </p>         <p>Stepping through our doors was not a coincidence; it was a divine step toward your next level of spiritual growth and purpose. Here, we believe that church is a family built on deep integrity, consistent faith, and genuine love. You have found a safe environment where you will be spiritually challenged, deeply supported, and equipped to leave a lasting name in your generation.</p>         <p>We would love to continue this journey with you. Here is our weekly schedule:</p>         <ul style=\"list-style-type: none; padding: 0; margin-top: 20px;\">             <li style=\"margin-bottom: 10px;\"><strong>Thursday Service:</strong> 5:00 PM</li>             <li style=\"margin-bottom: 10px;\"><strong>Sunday 1st Service:</strong> 7:00 AM</li>             <li style=\"margin-bottom: 10px;\"><strong>Sunday 2nd Service:</strong> 8:30 AM</li>             <li style=\"margin-bottom: 10px;\"><strong>Sunday 3rd Service:</strong> 10:00 AM</li>         </ul>         <p style=\"padding: 15px; background-color: #F8F9FA; border-left: 4px solid #0056B3; margin-top: 20px;\">             <strong>📍 Location:</strong> 129 Goldie Street, Calabar.         </p>         <p style=\"margin-top: 30px;\">You have made a powerful decision for your spiritual trajectory. We are so honored to be part of your story.</p>         <p>Welcome home.</p>         <p style=\"margin-top: 30px; border-top: 1px solid #eeeeee; padding-top: 20px;\">             Blessings,<br>             <strong style=\"color: #0056B3;\">The Pastoral Team</strong><br>             <span style=\"color: #D4AF37; font-weight: bold;\">Doxa Commission Global</span>         </p>     </div> </div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        160
+      ],
+      "id": "a66fc0ed-c5c7-4ed7-a4cb-fdd5b511782c",
+      "name": "Send a message2",
+      "webhookId": "3c27bf8e-d282-4c1d-9e93-750dd3f6de48",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m03rH5git5J8tGdG",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f1c0a79f-ee51-4563-8e66-3614d38a583c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1baa66d78baa269a6b308a371030a1fb44f421c6763a3eadadb5c5a1fb330c14"
+  },
+  "nodeGroups": [],
+  "id": "e6w7W19lVJudQXeQ",
+  "tags": []
+}

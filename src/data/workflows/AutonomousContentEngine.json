@@ -1,0 +1,914 @@
+{
+  "name": "Content generator brain",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 22
+            },
+            {
+              "triggerAtHour": 12,
+              "triggerAtMinute": 13
+            },
+            {
+              "triggerAtHour": 5,
+              "triggerAtMinute": 47
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "11b92562-cfb7-421f-93ab-c74fd4817e88",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appFTcebfqKCkfQz0",
+          "mode": "list",
+          "cachedResultName": "Helio Convert Publishing Engine",
+          "cachedResultUrl": "https://airtable.com/appFTcebfqKCkfQz0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblzdf9OgPOFV9xZ4",
+          "mode": "list",
+          "cachedResultName": "Knowledge Vault",
+          "cachedResultUrl": "https://airtable.com/appFTcebfqKCkfQz0/tblzdf9OgPOFV9xZ4"
+        },
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        0
+      ],
+      "id": "68be744a-3cfd-4a9a-9caf-1dc30cdd874f",
+      "name": "Search records",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "UwvYdFLuH9kjnXvj",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Define our 5 angles\nconst angles = [\n  \"Architectural Breakdown\", \n  \"Bottleneck & Cost of Inaction\", \n  \"Contrarian / Unpopular Take\", \n  \"Client Transformation Story\", \n  \"Quick Strategic Tip\"\n];\n\n// Pick one at random\nconst randomAngle = angles[Math.floor(Math.random() * angles.length)];\n\n// Pass the Airtable data and the new Angle to the AI\nreturn {\n  json: {\n    Topic: $input.item.json.fields[\"Topic/system name\"],\n    Pillar: $input.item.json.fields.Pillar,\n    Context: $input.item.json.fields[\"Core Context & Metrics\"],\n    Takeaway: $input.item.json.fields[\"Key Takeaway/Lesson\"],\n    Selected_Angle: randomAngle\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        0
+      ],
+      "id": "f26c366e-5943-4568-811d-68815423a91e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        208
+      ],
+      "id": "c1b1f4f3-d7f7-4a0b-be45-4ade2dbdb608",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "G8Pkt2VgbdcZysJe",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Clean the AI markdown formatting before parsing the JSON\nlet rawText = $input.item.json.text || \"{}\";\nrawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();\nconst aiData = JSON.parse(rawText);\n\n// 2. Extract Data\nconst visualType = aiData.visual_type || \"flowchart\";\nconst badgeText = (aiData.badge_text || \"SYSTEMS INTEGRATION\").toUpperCase();\nconst clientText = aiData.client_text || \"Client: Internal\";\nconst title = aiData.title || \"The Infrastructure Pipeline\";\nconst n1 = aiData.node_1 || \"Initial State\";\nconst n2 = aiData.node_2 || \"Processing\";\nconst n3 = aiData.node_3 || \"Output / Result\";\n\n// 3. Base Brand CSS (Slate, Glows, Glassmorphism)\nconst baseCSS = `\n  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }\n  body {\n    width: 1080px; height: 1080px;\n    background-color: #121214;\n    background-image:\n      radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),\n      radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),\n      radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);\n    background-size: 100% 100%, 100% 100%, 24px 24px;\n    display: flex; justify-content: center; align-items: center;\n    color: #ffffff; position: relative; overflow: hidden;\n  }\n  .canvas-border {\n    position: absolute; top: 20px; left: 20px; right: 20px; bottom: 20px;\n    border: 1px solid rgba(255,255,255,0.06); border-radius: 40px;\n    pointer-events: none; z-index: 2;\n  }\n  .bg-telemetry {\n    position: absolute; top: 40px; left: 40px; right: 40px;\n    font-family: monospace; font-size: 20px; line-height: 2;\n    color: #a1a1aa; opacity: 0.15; white-space: pre; z-index: 1;\n    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);\n    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);\n  }\n  .ambient-glow {\n    position: absolute; width: 700px; height: 700px;\n    background: rgba(16, 185, 129, 0.15);\n    filter: blur(120px); z-index: 3; top: 50%; left: 50%; transform: translate(-50%, -50%);\n  }\n  .helio-card {\n    width: 920px; height: 920px;\n    background: linear-gradient(145deg, rgba(24, 24, 27, 0.95), rgba(9, 9, 11, 0.98));\n    backdrop-filter: blur(20px);\n    border-top: 1px solid rgba(255, 255, 255, 0.12);\n    border-left: 1px solid rgba(255, 255, 255, 0.08);\n    border-right: 1px solid rgba(0, 0, 0, 0.6);\n    border-bottom: 1px solid rgba(0, 0, 0, 0.8);\n    border-radius: 24px; padding: 70px;\n    display: flex; flex-direction: column; position: relative; z-index: 10;\n    box-shadow: 0 40px 100px -10px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255,255,255,0.05);\n  }\n  .header-row { display: flex; gap: 16px; margin-bottom: 50px; align-items: center; }\n  .pill {\n    background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);\n    border-radius: 99px; padding: 10px 20px;\n    font-size: 15px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 1.5px;\n    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);\n  }\n  .client-text { font-size: 18px; font-weight: 500; color: #a1a1aa; letter-spacing: 0.5px; }\n  .main-title { font-size: 58px; font-weight: 800; line-height: 1.15; margin-bottom: 60px; letter-spacing: -1px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }\n  .footer { \n    position: absolute; bottom: 60px; left: 70px; right: 70px;\n    display: flex; justify-content: space-between; align-items: center;\n    border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px;\n  }\n  .footer-text { font-size: 16px; font-weight: 700; color: #71717a; letter-spacing: 2px; text-transform: uppercase; }\n  .footer-brand { font-size: 20px; font-weight: 800; color: #f4f4f5; display: flex; align-items: center; gap: 10px; }\n  .footer-dot { width: 12px; height: 12px; background: #10b981; border-radius: 50%; box-shadow: 0 0 12px #10b981; }\n`;\n\n// 4. Dynamic Template Logic\nlet templateCSS = \"\";\nlet contentHTML = \"\";\n\nif (visualType === \"metric_dashboard\") {\n  // --- METRIC DASHBOARD TEMPLATE ---\n  templateCSS = `\n    .metric-container { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; margin-bottom: 80px; }\n    .metric-value { font-size: 140px; font-weight: 900; color: #10b981; line-height: 1; text-shadow: 0 20px 60px rgba(16, 185, 129, 0.3); letter-spacing: -4px; margin-bottom: 20px; }\n    .metric-label { font-size: 32px; font-weight: 600; color: #ffffff; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }\n    .metric-sub { font-size: 22px; color: #a1a1aa; text-align: center; max-width: 80%; font-family: monospace; }\n  `;\n  contentHTML = `\n    <div class=\"metric-container\">\n      <div class=\"metric-value\">${n1}</div>\n      <div class=\"metric-label\">${n2}</div>\n      <div class=\"metric-sub\">> ${n3}</div>\n    </div>\n  `;\n} \nelse if (visualType === \"split_compare\") {\n  // --- SPLIT COMPARE TEMPLATE ---\n  templateCSS = `\n    .split-container { display: flex; gap: 30px; flex: 1; margin-bottom: 80px; }\n    .split-card { flex: 1; padding: 40px; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }\n    .old-way { background: linear-gradient(180deg, rgba(239, 68, 68, 0.05), rgba(0,0,0,0.5)); border: 1px solid rgba(239, 68, 68, 0.2); }\n    .new-way { background: linear-gradient(180deg, rgba(16, 185, 129, 0.1), rgba(0,0,0,0.5)); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 10px 40px rgba(16,185,129,0.1); transform: scale(1.02); }\n    .split-label { font-family: monospace; font-size: 16px; letter-spacing: 2px; margin-bottom: 20px; }\n    .old-way .split-label { color: #ef4444; }\n    .new-way .split-label { color: #10b981; }\n    .split-text { font-size: 26px; font-weight: 500; line-height: 1.6; color: #f4f4f5; }\n    .old-way .split-text { color: #a1a1aa; text-decoration: line-through; opacity: 0.7; }\n  `;\n  contentHTML = `\n    <div class=\"split-container\">\n      <div class=\"split-card old-way\">\n        <div class=\"split-label\">[ LEGACY METHOD ]</div>\n        <div class=\"split-text\">${n1}</div>\n      </div>\n      <div class=\"split-card new-way\">\n        <div class=\"split-label\">[ HELIOCONVERT ARCHITECTURE ]</div>\n        <div class=\"split-text\">${n2}</div>\n      </div>\n    </div>\n  `;\n}\nelse if (visualType === \"tech_stack\") {\n  // --- TECH STACK TEMPLATE ---\n  templateCSS = `\n    .stack-container { display: flex; flex-direction: column; gap: 40px; flex: 1; margin-bottom: 80px; position: relative; }\n    .stack-line { position: absolute; left: 50%; top: 40px; bottom: 40px; width: 2px; background: linear-gradient(to bottom, rgba(16,185,129,0) 0%, rgba(16,185,129,0.5) 50%, rgba(16,185,129,0) 100%); transform: translateX(-50%); z-index: 0; }\n    .stack-item { background: rgba(24, 24, 27, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 25px 40px; border-radius: 12px; display: flex; justify-content: center; align-items: center; z-index: 1; margin: 0 auto; min-width: 60%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }\n    .stack-item:nth-child(2) { border-color: #38bdf8; box-shadow: 0 10px 30px rgba(56, 189, 248, 0.15); }\n    .stack-item:nth-child(3) { border-color: #10b981; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15); transform: scale(1.05); }\n    .stack-text { font-size: 28px; font-weight: 700; color: #f4f4f5; font-family: monospace; letter-spacing: 1px; }\n  `;\n  contentHTML = `\n    <div class=\"stack-container\">\n      <div class=\"stack-line\"></div>\n      <div class=\"stack-item\"><div class=\"stack-text\">${n1}</div></div>\n      <div class=\"stack-item\"><div class=\"stack-text\">${n2}</div></div>\n      <div class=\"stack-item\"><div class=\"stack-text\">${n3}</div></div>\n    </div>\n  `;\n}\nelse {\n  // --- DEFAULT FLOWCHART TEMPLATE ---\n  templateCSS = `\n    .flow-container { display: flex; flex-direction: column; gap: 20px; position: relative; margin-left: 10px; flex: 1; margin-bottom: 80px; }\n    .flow-line { position: absolute; left: 34px; top: 40px; bottom: 40px; width: 2px; background: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(16,185,129,0.5) 50%, rgba(255,255,255,0.05) 100%); z-index: 0; }\n    .flow-step { display: flex; align-items: center; gap: 30px; z-index: 1; background: rgba(0,0,0,0.3); padding: 20px 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }\n    .flow-step.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), rgba(0,0,0,0.3)); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: scale(1.02); }\n    .step-num { width: 70px; height: 70px; border-radius: 50%; background: #09090b; border: 2px solid #3f3f46; display: flex; justify-content: center; align-items: center; font-family: monospace; font-size: 26px; color: #a1a1aa; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 2; }\n    .active .step-num { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }\n    .step-text { font-size: 32px; font-weight: 500; color: #a1a1aa; }\n    .active .step-text { color: #ffffff; font-weight: 700; }\n  `;\n  contentHTML = `\n    <div class=\"flow-container\">\n      <div class=\"flow-line\"></div>\n      <div class=\"flow-step\">\n        <div class=\"step-num\">1</div><div class=\"step-text\">${n1}</div>\n      </div>\n      <div class=\"flow-step active\">\n        <div class=\"step-num\">2</div><div class=\"step-text\">${n2}</div>\n      </div>\n      <div class=\"flow-step\">\n        <div class=\"step-num\">3</div><div class=\"step-text\">${n3}</div>\n      </div>\n    </div>\n  `;\n}\n\n// 5. Assemble Final HTML\nconst htmlPayload = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap\" rel=\"stylesheet\">\n  <style>\n    ${baseCSS}\n    ${templateCSS}\n  </style>\n</head>\n<body>\n  <div class=\"canvas-border\"></div>\n  <div class=\"bg-telemetry\">&gt; [SYS] Initializing runtime environment...\n&gt; [SYS] Routing payload to HelioConvert engine...\n&gt; [DB] Connection pool active (postgres://heliodb)\n&gt; [API] 200 OK - Response Time: 42ms\n&gt; [SEC] Infrastructure handshake verified\n&gt; [REV] Pipeline health score: 99.8%</div>\n  <div class=\"ambient-glow\"></div>\n  <div class=\"helio-card\">\n    <div class=\"header-row\">\n      <div class=\"pill\">${badgeText}</div>\n      <div class=\"client-text\">${clientText}</div>\n    </div>\n    <div class=\"main-title\">${title}</div>\n    \n    ${contentHTML}\n    \n    <div class=\"footer\">\n      <div class=\"footer-text\">VIEW ARCHITECTURE ⌄</div>\n      <div class=\"footer-brand\"><div class=\"footer-dot\"></div> HelioConvert</div>\n    </div>\n  </div>\n</body>\n</html>\n`;\n\nreturn { json: { html: htmlPayload } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        -144
+      ],
+      "id": "292fdb1e-dc64-44bd-bbb9-32d180b1f271",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.html2img.com/api/html",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "htim_QENeRZ1uk3cydJEUguKVETH1aPeJAOGx"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "html",
+              "value": "={{ $json.html }}"
+            },
+            {
+              "name": "width",
+              "value": "1080"
+            },
+            {
+              "name": "height",
+              "value": "1080"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1504,
+        -144
+      ],
+      "id": "a69eb951-5ca3-4bc5-ad65-b604a88f1659",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        208
+      ],
+      "id": "09e1d894-8bbb-4261-b9a9-74082a90c624",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "G8Pkt2VgbdcZysJe",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "stjTYkZLAi",
+        "text": "={{ $('AI Post writer').item.json.text }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1888,
+        -144
+      ],
+      "id": "6d868d92-db92-47a8-8a87-35e371e40b46",
+      "name": "Create a post2",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "lowqOaPbsJABfeg1",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1696,
+        -144
+      ],
+      "id": "264207d3-cf22-44c9-9a8a-cec24e32fb55",
+      "name": "HTTP Request3",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f32f4798-838c-4695-9b1d-f5ca241c041a",
+              "leftValue": "={{ JSON.parse($json.text.replace(/```json/g, '').replace(/```/g, '').trim()).post_format }}",
+              "rightValue": "image",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1008,
+        0
+      ],
+      "id": "f75f67c7-a557-48e7-aaf2-0585d2c9a34f",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "person": "stjTYkZLAi",
+        "text": "={{ $('AI Post writer').item.json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        128
+      ],
+      "id": "171b86fd-e9ab-4d52-ab49-8dc02ffd005b",
+      "name": "Create a post3",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "lowqOaPbsJABfeg1",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appFTcebfqKCkfQz0",
+          "mode": "list",
+          "cachedResultName": "Helio Convert Publishing Engine",
+          "cachedResultUrl": "https://airtable.com/appFTcebfqKCkfQz0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljMA3DWbXtohj8P",
+          "mode": "list",
+          "cachedResultName": "Content Queue",
+          "cachedResultUrl": "https://airtable.com/appFTcebfqKCkfQz0/tbljMA3DWbXtohj8P"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search records').first().json.id }}",
+            "Status": "Published"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Post Title",
+              "displayName": "Post Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Raw Engineering Artifact",
+              "displayName": "Raw Engineering Artifact",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Platform",
+              "displayName": "Platform",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "LinkedIn",
+                  "value": "LinkedIn"
+                },
+                {
+                  "name": "Instagram",
+                  "value": "Instagram"
+                },
+                {
+                  "name": "GitHub",
+                  "value": "GitHub"
+                },
+                {
+                  "name": "X",
+                  "value": "X"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "AI Draft",
+              "displayName": "AI Draft",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Drafting",
+                  "value": "Drafting"
+                },
+                {
+                  "name": "Approved",
+                  "value": "Approved"
+                },
+                {
+                  "name": "Needs Approval",
+                  "value": "Needs Approval"
+                },
+                {
+                  "name": "Published",
+                  "value": "Published"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Scheduled time",
+              "displayName": "Scheduled time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Published URL",
+              "displayName": "Published URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Content Angle",
+              "displayName": "Content Angle",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Architectural Breakdown",
+                  "value": "Architectural Breakdown"
+                },
+                {
+                  "name": "Bottleneck & Cost of inaction",
+                  "value": "Bottleneck & Cost of inaction"
+                },
+                {
+                  "name": "Contrarian / Unpopular Take",
+                  "value": "Contrarian / Unpopular Take"
+                },
+                {
+                  "name": "Client Transformation story",
+                  "value": "Client Transformation story"
+                },
+                {
+                  "name": "Quick strategic tip",
+                  "value": "Quick strategic tip"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Knowledge link",
+              "displayName": "Knowledge link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1536,
+        128
+      ],
+      "id": "d5efa2e8-323b-40a7-bae7-f78b58ad1742",
+      "name": "Update record3",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "UwvYdFLuH9kjnXvj",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appFTcebfqKCkfQz0",
+          "mode": "list",
+          "cachedResultName": "Helio Convert Publishing Engine",
+          "cachedResultUrl": "https://airtable.com/appFTcebfqKCkfQz0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljMA3DWbXtohj8P",
+          "mode": "list",
+          "cachedResultName": "Content Queue",
+          "cachedResultUrl": "https://airtable.com/appFTcebfqKCkfQz0/tbljMA3DWbXtohj8P"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Published",
+            "AI Draft": "={{ $('AI Post writer').item.json.text }}",
+            "Post Title": "={{ JSON.parse($('AI router').item.json.text.replace(/```json/g, '').replace(/```/g, '').trim()).title }}",
+            "Platform": "={{ [\"LinkedIn\"] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Post Title",
+              "displayName": "Post Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Raw Engineering Artifact",
+              "displayName": "Raw Engineering Artifact",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Platform",
+              "displayName": "Platform",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "LinkedIn",
+                  "value": "LinkedIn"
+                },
+                {
+                  "name": "Instagram",
+                  "value": "Instagram"
+                },
+                {
+                  "name": "GitHub",
+                  "value": "GitHub"
+                },
+                {
+                  "name": "X",
+                  "value": "X"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI Draft",
+              "displayName": "AI Draft",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Drafting",
+                  "value": "Drafting"
+                },
+                {
+                  "name": "Approved",
+                  "value": "Approved"
+                },
+                {
+                  "name": "Needs Approval",
+                  "value": "Needs Approval"
+                },
+                {
+                  "name": "Published",
+                  "value": "Published"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Scheduled time",
+              "displayName": "Scheduled time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Published URL",
+              "displayName": "Published URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Content Angle",
+              "displayName": "Content Angle",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Architectural Breakdown",
+                  "value": "Architectural Breakdown"
+                },
+                {
+                  "name": "Bottleneck & Cost of inaction",
+                  "value": "Bottleneck & Cost of inaction"
+                },
+                {
+                  "name": "Contrarian / Unpopular Take",
+                  "value": "Contrarian / Unpopular Take"
+                },
+                {
+                  "name": "Client Transformation story",
+                  "value": "Client Transformation story"
+                },
+                {
+                  "name": "Quick strategic tip",
+                  "value": "Quick strategic tip"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Knowledge link",
+              "displayName": "Knowledge link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        2032,
+        -144
+      ],
+      "id": "6132e4ee-7787-462e-b2d3-24ebf5a8ed54",
+      "name": "Create a record",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "UwvYdFLuH9kjnXvj",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are Ginger-Eke Chienyegom, a highly technical B2B digital systems architect and solo RevOps consultant based in Abuja, Nigeria. \n\nWrite a LinkedIn post using the provided parameters. \n\nCRITICAL WRITING CONSTRAINTS (DO NOT VIOLATE):\n1. NO AI HOOKS: Never start with \"In today's fast-paced world,\" \"Most [x] struggle with,\" \"Let's face it,\" or \"Imagine a world where.\" Start mid-thought or with a blunt technical observation.\n2. NO FAKE PROFUNDITY: Do not use parallel structures like \"It's not just X, it's Y\" or \"Not X. Not Y. Just Z.\" \n3. NO RHETORICAL DRAMA: Do not use question-and-answer transitions like \"The result?\", \"The worst part?\", \"But here's the kicker:\", or \"Why does this matter?\"\n4. NO AI BUZZWORDS: Ban the following words completely: delve, tapestry, landscape, unlock, unleash, testament, symphony, seamlessly, robust, pivot, dynamic, pivotal, cutting-edge, embark, facilitate.\n5. NO NEAT SUMMARIES: Never end with \"Ultimately,\", \"The bottom line is...\", or \"In conclusion.\" Just end the post abruptly when the point is made.\n6. NO EM-DASH ADDICTION: Limit your use of em-dashes (—). \n7. TONE: Be blunt, technical, and highly opinionated. Write casually but professionally, like a senior engineer talking to another engineer. Do not announce what you are writing (e.g., \"Let's unpack this\").\n\nTopic: {{$json.Topic}}\nPillar: {{$json.Pillar}}\nTechnical Context: {{$json.Context}}\nCore Lesson: {{$json.Takeaway}}\nWriting Angle: {{$json.Selected_Angle}}\n\nCONTENT STRATEGY & ANGLE ROTATION:\nTo keep the feed unpredictable and high-value, you must randomly select ONE of the following 5 angles to frame today's post.\n\n1. The Metric Tear-Down: Focus the post entirely around a hard data point, ROI, or performance guarantee (e.g., $500 CPA, 15x ROI, 8% reply rates).\n2. The Paradigm Split: Frame the post as a direct comparison between the fragile \"Old Way\" (traditional methods) and the engineered \"New Way\" (HelioConvert architecture).\n3. The Tech Stack: Focus the post on specific integrations, APIs, and software tools working together.\n4. The Flowchart: Break a complex concept down into a simple 3-step sequential process.\n5. The Contrarian Rant: Ignore all visual structure. Write a punchy, text-only unpopular opinion about B2B infrastructure.\n\nWrite the entire LinkedIn draft leaning heavily into whichever angle you randomly selected.\n\nOutput ONLY the exact text of the LinkedIn post. Do not include hashtags unless they are highly specific technical tags.",
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        432,
+        0
+      ],
+      "id": "c5c72ae4-8276-4fab-a759-8afbf44ce70e",
+      "name": "AI Post writer"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a visual router for a systems architect. Read this LinkedIn post draft and determine the best visual graphic to accompany it.\n\nPost Draft: {{ $json.text }}\n\nOutput a strict JSON object with the following keys:\n\nROUTING LOGIC:\nAnalyze the text and assign a \"visual_type\" based on these strict rules:\n\nIf the text explains a step-by-step process or sequence -> return \"flowchart\"\n\nIf the text highlights a specific guarantee, ROI, or data metric -> return \"metric_dashboard\"\n\nIf the text compares a bad traditional method against a superior engineered method -> return \"split_compare\"\n\nIf the text focuses on specific software tools, APIs, or infrastructure integrations -> return \"tech_stack\"\n\nIf the text is purely a philosophical rant, unpopular opinion, or lacks technical structure -> return \"text_only\"\n\n2. \"badge_text\": A 2-3 word category (e.g., \"AI CUSTOMER OPS\", \"DATA PIPELINES\").\n3. \"client_text\": The client or system name (e.g., \"Client: Pure Health\", \"Internal Infrastructure\").\n4. \"title\": A punchy 4-6 word title for the graphic.\n5. \"node_1\": (If flowchart) Step 1 label. (If message) The client's message. (If card) Key metric 1.\n6. \"node_2\": (If flowchart) Step 2 label. (If message) Your technical reply. (If card) Key metric 2.\n7. \"node_3\": (If flowchart) Step 3 label. (If message) Leave blank. (If card) Key metric 3.\n8. \"post_format\": Choose ONE based on the draft's tone: \"image\" (if the post is a technical breakdown, process, or client quote) OR \"text\" (if the post is a contrarian take, short thought, or rant).\n\nUI COPYWRITING RULES (CRITICAL):\nThe text assigned to node_1, node_2, and node_3 will be placed inside small UI design cards. It MUST be punchy, highly readable, and visually balanced.\n\nKeep the text extremely concise (maximum 6-8 words).\n\nYou MUST use HTML <br> tags to force smart, deliberate line breaks where a human designer would naturally split the text. Do not rely on auto-wrapping.\nExample Bad: \"Traditional Approach: Primary Domain, Misconfigured DNS, Reputation Collapse\"\nExample Good: \"Misconfigured DNS\n\n\nReputation Collapse\"\nExample Good: \"Distributed Infrastructure\n\n\nProactive Monitoring\"\n",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        720,
+        0
+      ],
+      "id": "1f215d0f-7a73-437f-a0b8-adc4a01186d7",
+      "name": "AI router",
+      "retryOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Post writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Post writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI router",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post2": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Create a post2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a post3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post3": {
+      "main": [
+        [
+          {
+            "node": "Update record3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Post writer": {
+      "main": [
+        [
+          {
+            "node": "AI router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI router": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "06c902f4-f2aa-4c54-adff-e0e197d478e9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1baa66d78baa269a6b308a371030a1fb44f421c6763a3eadadb5c5a1fb330c14"
+  },
+  "nodeGroups": [],
+  "id": "Uyu8N0rCm8xzlA24",
+  "tags": []
+}

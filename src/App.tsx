@@ -4,6 +4,8 @@ import Hero from './components/Hero';
 import Testimonial from './components/Testimonial';
 import AboutArchitect from './components/AboutArchitect';
 import FlagshipCaseStudy from './components/FlagshipCaseStudy';
+import MinistryCaseStudy from './components/MinistryCaseStudy';
+import AutonomousContentEngine from './pages/AutonomousContentEngine';
 import TechStackMarquee from './components/TechStackMarquee';
 import BuildsGrid from './components/BuildsGrid';
 import ArchitectureShowcase from './components/ArchitectureShowcase';
@@ -28,8 +30,10 @@ export default function App() {
         <Hero />
         <Testimonial />
         <TechStackMarquee />
+        <AutonomousContentEngine />
         <AboutArchitect />
         <FlagshipCaseStudy />
+        <MinistryCaseStudy />
         <BuildsGrid />
         <ArchitectureShowcase />
         <RoiCalculator />

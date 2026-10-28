@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { CLIENT_BUILDS } from '../data/builds';
 import type { ClientBuild } from '../data/builds';
+import InfiniteBuildsMarquee from './InfiniteBuildsMarquee';
 
 const CONCEPT_CLIENTS = [
   'Global Retail Corp',
@@ -118,9 +119,9 @@ function BuildCard({ build, isConcept }: { build: ClientBuild; isConcept?: boole
 
 export default function BuildsGrid() {
   return (
-    <section id="portfolio" className="max-w-[1400px] w-full mx-auto px-6 py-24 sm:py-32 space-y-12 border-t border-white/[0.04]">
+    <section id="portfolio" className="w-full py-24 sm:py-32 space-y-12 border-t border-white/[0.04]">
       {/* Section Header */}
-      <div className="space-y-4 max-w-2xl">
+      <div className="max-w-[1400px] mx-auto px-6 space-y-4">
         <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
           Builds/Past work
         </h2>
@@ -129,26 +130,34 @@ export default function BuildsGrid() {
 
       {/* Real Client Work */}
       <div className="space-y-6">
-        <h3 className="text-[10px] font-mono tracking-widest text-accentOrange-text uppercase font-semibold">
-          CLIENT WORK
-        </h3>
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 items-start">
-          {REAL_BUILDS.map((build) => (
+        <div className="max-w-[1400px] mx-auto px-6">
+          <h3 className="text-[10px] font-mono tracking-widest text-accentOrange-text uppercase font-semibold">
+            CLIENT WORK
+          </h3>
+        </div>
+        <InfiniteBuildsMarquee
+          items={REAL_BUILDS.map((build) => (
             <BuildCard key={build.id} build={build} />
           ))}
-        </div>
+          speed={45}
+          direction="left"
+        />
       </div>
 
       {/* Concept Builds */}
       <div className="space-y-6 pt-12">
-        <h3 className="text-[10px] font-mono tracking-widest text-accentOrange-text uppercase font-semibold">
-          REFERENCE BUILDS
-        </h3>
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 items-start">
-          {CONCEPT_BUILDS.map((build) => (
+        <div className="max-w-[1400px] mx-auto px-6">
+          <h3 className="text-[10px] font-mono tracking-widest text-accentOrange-text uppercase font-semibold">
+            REFERENCE BUILDS
+          </h3>
+        </div>
+        <InfiniteBuildsMarquee
+          items={CONCEPT_BUILDS.map((build) => (
             <BuildCard key={build.id} build={build} isConcept />
           ))}
-        </div>
+          speed={55}
+          direction="right"
+        />
       </div>
     </section>
   );

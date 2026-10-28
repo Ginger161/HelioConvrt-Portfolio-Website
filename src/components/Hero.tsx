@@ -239,7 +239,18 @@ export default function Hero() {
           </motion.div>
 
           {/* Headline */}
-          <div className="space-y-4">
+          <div className="space-y-6">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.05 }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accentGreen-DEFAULT/10 border border-accentGreen-DEFAULT/20"
+            >
+              <span className="text-xs font-mono text-accentGreen-text font-semibold tracking-wider">
+                HelioConvert <span className="opacity-50 mx-1">//</span> Systems & RevOps Engineering
+              </span>
+            </motion.div>
+            
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

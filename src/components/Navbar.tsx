@@ -39,6 +39,12 @@ export default function Navbar() {
             Philosophy
           </a>
           <a
+            href="https://store.helioconvrt.com"
+            className="text-xs font-medium text-slate-400 hover:text-white transition-colors duration-300"
+          >
+            Courses
+          </a>
+          <a
             href="https://www.upwork.com/freelancers/~01a9e8c29b672fc4d5?mp_source=share"
             target="_blank"
             rel="noopener noreferrer"

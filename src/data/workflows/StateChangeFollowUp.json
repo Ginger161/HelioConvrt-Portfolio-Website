@@ -1,0 +1,143 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableOAuth2Api",
+        "baseId": {
+          "__rl": true,
+          "value": "https://airtable.com/applyFtErubMLf6Py/tblWztjCsOa2w5Di7/viwix990Tpyco5v3H?blocks=hide",
+          "mode": "url"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "https://airtable.com/applyFtErubMLf6Py/tblWztjCsOa2w5Di7/viwix990Tpyco5v3H?blocks=hide",
+          "mode": "url"
+        },
+        "triggerField": "Status Modified Time",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d729916b-1d93-4e27-a3b6-2833f766d8c2",
+      "name": "Airtable Trigger",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "UwvYdFLuH9kjnXvj",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.fields.Status }}",
+                    "rightValue": "Follow-up 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "bfecc3c8-b61e-4317-9906-a8bcf06dbbe9"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        256,
+        0
+      ],
+      "id": "aaa8cbdc-2850-4326-893f-f307c80c2133",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Airtable Trigger').item.json.fields.Email }}",
+        "subject": "Taking the Next Step at Doxa Commission",
+        "message": "=<div style=\"font-family: 'Arial', sans-serif; max-width: 600px; margin: auto; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);\">     <div style=\"background-color: #0056B3; padding: 30px; text-align: center;\">         <img src=\"https://yt3.googleusercontent.com/ytc/AIdro_mB7bTmYS5vNAHTCSjuTb4gSoZU1fJjMoi00mJgJxpi_A=s160-c-k-c0x00ffffff-no-rj\" alt=\"Doxa Commission Global\" style=\"max-width: 120px; border-radius: 50%;\">     </div>     <div style=\"padding: 40px 30px; background-color: #ffffff; color: #333333; line-height: 1.6; font-size: 16px;\">         <p>Hi {{ $('Airtable Trigger').item.json.fields.Name }},</p>         <p>It was an absolute honor having you worship with us this past weekend.</p>         <p>We believe that Sunday is just the beginning. The real strength of our ministry is found in our community. When you are planted in the right environment, spiritual growth becomes natural.</p>         <p>We would love for you to get connected with one of our small groups. It is the best way to build relationships, study the Word deeply, and find a family within the church.</p>         <p style=\"text-align: center; margin: 40px 0;\">             <a href=\"https://example.com\" style=\"background-color: #D4AF37; color: #111827; text-decoration: none; padding: 14px 28px; font-weight: bold; border-radius: 6px; display: inline-block;\">Explore Our Small Groups</a>         </p>         <p>If you have any questions or need prayer for anything specific this week, just reply directly to this email. We are here for you.</p>         <p style=\"margin-top: 30px; border-top: 1px solid #eeeeee; padding-top: 20px;\">             Blessings,<br>             <strong style=\"color: #0056B3;\">The Pastoral Team</strong><br>             <span style=\"color: #D4AF37; font-weight: bold;\">Doxa Commission Global</span>         </p>     </div> </div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "012f4108-66dd-47f2-9f9c-103f5000cd8c",
+      "name": "Send a message",
+      "webhookId": "94c147c6-0e0a-4ab1-a8ff-ee0697d8c290",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m03rH5git5J8tGdG",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Airtable Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "48ab0cd5-b992-412c-8796-6ee0bf3df739",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1baa66d78baa269a6b308a371030a1fb44f421c6763a3eadadb5c5a1fb330c14"
+  },
+  "nodeGroups": [],
+  "id": "k7IEv7xzRJw5AMGM",
+  "tags": []
+}

@@ -1,0 +1,15 @@
+# Netlify settings for helioconvrt.com. These match what Netlify normally auto-detects for a Vite site;
+# the build script now also writes the page text into index.html (scripts/prerender.mjs) so crawlers can read it.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+  [build.environment]
+    NODE_VERSION = "22"
+
+# One address for the site: send www to the bare domain (the canonical used in the page and sitemap).
+[[redirects]]
+  from = "https://www.helioconvrt.com/*"
+  to = "https://helioconvrt.com/:splat"
+  status = 301
+  force = true
